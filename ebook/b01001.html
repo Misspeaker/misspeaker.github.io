@@ -1,0 +1,441 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>亚默斯达法</title><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 40px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 2; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px !important; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-diagram-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  html.blink-to-pdf { font-size: 13px; }
+  .typora-export #write { padding-left: 32px; padding-right: 32px; padding-bottom: 0px; break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.html-for-mac .inline-math-svg .MathJax_SVG { vertical-align: 0.2px; }
+.md-math-block .MathJax_SVG_Display { text-align: center; margin: 0px; position: relative; text-indent: 0px; max-width: none; max-height: none; min-height: 0px; min-width: 100%; width: auto; overflow-y: hidden; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: var(--monospace); }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: 400; line-height: normal; zoom: 90%; text-indent: 0px; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; overflow-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0px; min-height: 0px; border: 0px; padding: 0px; margin: 0px; }
+.MathJax_SVG * { transition: none 0s ease 0s; }
+.MathJax_SVG_Display svg { vertical-align: middle !important; margin-bottom: 0px !important; margin-top: 0px !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+svg[id^="mermaidChart"] { line-height: 1em; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+mark .md-meta { color: rgb(0, 0, 0); opacity: 0.3 !important; }
+
+
+html {
+	font-size: 19px;
+}
+
+html, body {
+	margin: auto;
+	background: #fefefe;
+}
+body {
+	font-family: "Vollkorn", Palatino, Times;
+	color: #333;
+	line-height: 1.4;
+	text-align: justify;
+}
+#write {
+	max-width: 960px;
+	margin: 0 auto;
+	margin-bottom: 2em;
+	line-height: 1.53;
+	padding-top: 40px;
+}
+
+/* Typography
+-------------------------------------------------------- */
+
+#write>h1:first-child,
+h1 {
+	margin-top: 1.6em;
+	font-weight: normal;
+}
+
+h1 {
+	font-size:3em;
+}
+
+h2 {
+	margin-top:2em;
+	font-weight: normal;
+}
+
+h3 {
+	font-weight: normal;
+	font-style: italic;
+	margin-top: 3em;
+}
+
+h1, 
+h2, 
+h3{
+	text-align: center;
+}
+
+h2:after{
+	border-bottom: 1px solid #2f2f2f;
+    content: '';
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+    height: 1px;
+}
+
+h1+h2, h2+h3 {
+	margin-top: 0.83em;
+}
+
+p,
+.mathjax-block {
+	margin-top: 0;
+	-webkit-hypens: auto;
+	-moz-hypens: auto;
+	hyphens: auto;
+}
+ul {
+	list-style: square;
+	padding-left: 1.2em;
+}
+ol {
+	padding-left: 1.2em;
+}
+blockquote {
+	margin-left: 1em;
+	padding-left: 1em;
+	border-left: 1px solid #ddd;
+}
+code,
+pre {
+	font-family: "Consolas", "Menlo", "Monaco", monospace, serif;
+	font-size: .9em;
+	background: white;
+}
+.md-fences{
+	margin-left: 1em;
+	padding-left: 1em;
+	border: 1px solid #ddd;
+	padding-bottom: 8px;
+	padding-top: 6px;
+	margin-bottom: 1.5em;
+}
+
+a {
+	color: #2484c1;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+a img {
+	border: none;
+}
+h1 a,
+h1 a:hover {
+	color: #333;
+	text-decoration: none;
+}
+hr {
+	color: #ddd;
+	height: 1px;
+	margin: 2em 0;
+	border-top: solid 1px #ddd;
+	border-bottom: none;
+	border-left: 0;
+	border-right: 0;
+}
+.ty-table-edit {
+	background: #ededed;
+    padding-top: 4px;
+}
+table {
+	margin-bottom: 1.333333rem
+}
+table th,
+table td {
+	padding: 8px;
+	line-height: 1.333333rem;
+	vertical-align: top;
+	border-top: 1px solid #ddd
+}
+table th {
+	font-weight: bold
+}
+table thead th {
+	vertical-align: bottom
+}
+table caption+thead tr:first-child th,
+table caption+thead tr:first-child td,
+table colgroup+thead tr:first-child th,
+table colgroup+thead tr:first-child td,
+table thead:first-child tr:first-child th,
+table thead:first-child tr:first-child td {
+	border-top: 0
+}
+table tbody+tbody {
+	border-top: 2px solid #ddd
+}
+
+.task-list{
+	padding:0;
+}
+
+.md-task-list-item {
+	padding-left: 1.6rem;
+}
+
+.md-task-list-item > input:before {
+	content: '\221A';
+	display: inline-block;
+	width: 1.33333333rem;
+  	height: 1.6rem;
+	vertical-align: middle;
+	text-align: center;
+	color: #ddd;
+	background-color: #fefefe;
+}
+
+.md-task-list-item > input:checked:before,
+.md-task-list-item > input[checked]:before{
+	color: inherit;
+}
+.md-tag {
+	color: inherit;
+	font: inherit;
+}
+#write pre.md-meta-block {
+	min-height: 35px;
+	padding: 0.5em 1em;
+}
+#write pre.md-meta-block {
+	white-space: pre;
+	background: #f8f8f8;
+	border: 0px;
+	color: #999;
+	
+	width: 100vw;
+	max-width: calc(100% + 60px);
+	margin-left: -30px;
+	border-left: 30px #f8f8f8 solid;
+	border-right: 30px #f8f8f8 solid;
+
+	margin-bottom: 2em;
+	margin-top: -1.3333333333333rem;
+	padding-top: 26px;
+	padding-bottom: 10px;
+	line-height: 1.8em;
+	font-size: 0.9em;
+	font-size: 0.76em;
+	padding-left: 0;
+}
+.md-img-error.md-image>.md-meta{
+	vertical-align: bottom;
+}
+#write>h5.md-focus:before {
+	top: 2px;
+}
+
+.md-toc {
+	margin-top: 40px;
+}
+
+.md-toc-content {
+	padding-bottom: 20px;
+}
+
+.outline-expander:before {
+	color: inherit;
+	font-size: 14px;
+	top: auto;
+	content: "\f0da";
+	font-family: FontAwesome;
+}
+
+.outline-expander:hover:before,
+.outline-item-open>.outline-item>.outline-expander:before {
+  	content: "\f0d7";
+}
+
+/** source code mode */
+#typora-source {
+	font-family: Courier, monospace;
+    color: #6A6A6A;
+}
+
+.html-for-mac #typora-sidebar {
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.cm-s-typora-default .cm-header, 
+.cm-s-typora-default .cm-property,
+.CodeMirror.cm-s-typora-default div.CodeMirror-cursor {
+	color: #428bca;
+}
+
+.cm-s-typora-default .cm-atom, .cm-s-typora-default .cm-number {
+	color: #777777;
+}
+
+.typora-node .file-list-item-parent-loc, 
+.typora-node .file-list-item-time, 
+.typora-node .file-list-item-summary {
+	font-family: arial, sans-serif;
+}
+
+.md-task-list-item>input {
+    margin-left: -1.3em;
+    margin-top: calc(1rem - 12px);
+}
+
+.md-mathjax-midline {
+	background: #fafafa;
+}
+
+.md-fences .code-tooltip {
+	bottom: -2em !important;
+}
+
+.dropdown-menu .divider {
+	border-color: #e5e5e5;
+}
+
+
+</style>
+</head>
+<body class='typora-export os-windows' >
+<div  id='write'  class = 'is-node'><h1><a name="亚默斯达法" class="md-header-anchor"></a><span>亚默斯达法</span></h1><h3><a name="纪伯伦" class="md-header-anchor"></a><span>纪伯伦</span></h3><p>&nbsp;</p><h2><a name="船的来临" class="md-header-anchor"></a><span>船的来临</span></h2><p>&nbsp;</p><p><span>当代的曙光，被选而被爱戴的亚墨斯达法，在阿法利斯城等候了十二年，等他的船到来，好载他归回他生长的岛上去。</span></p><p><span>在第十二年绮露收获之月的第七天，他出城登上山顶，向海凝望，他看见了他的船从烟雾中驶来。</span></p><p><span>他的心扉砉然地开了，他的喜悦在海面飞越。他合上眼，在灵魂的严静中祷告。</span></p><p><span>但当他上山的时候，忽然一阵悲哀袭来，他心里想：</span></p><p><span>我怎能这般宁静地走去而没有些忧哀？不，我要精神上不受创伤地离此城郭。</span></p><p><span>在这城围里，我度过了悠久的痛苦的日月和孤寂的深夜：谁能撇下这痛苦与孤寂，而没有一些惋惜？</span></p><p><span>在这街市上，我曾撒下过多的零碎的精神，在这山中，也有过多的赤裸着行走的我所爱惜的孩子，离开他们，我不能不觉得负担与痛心。</span></p><p><span>这不是今天我脱弃了一件衣裳，乃是我用自己的手撕下了一块自己的皮肤。</span></p><p><span>也不是我遗弃了一种思想，乃是遗弃了一颗用饥和渴做成的甜蜜的心。然而，我不能再迟留了。</span></p><p><span>那召唤万物来归的大海，也在召唤我，我必须登舟了。</span></p><p><span>因为，若是停留下，我的归思，在夜间虽仍灼热奋发，渐渐地却要冰冷变石了。</span></p><p><span>我若能把这里的一切都带了去，何等的快乐啊！但是我又怎能呢？</span></p><p><span>声音不能把付给他翅翼的舌头和嘴唇带走。他自己必须寻求“以太”。</span></p><p><span>鹰鸟也必须撇下窝巢，独自地飞过太阳。</span></p><p><span>现在他走到山脚，又转面向海，他看见他的船徐徐地驶入湾口，那些在船头的舟子，正是他的故乡人。</span></p><p><span>于是，他的精魂向着他们呼唤，说：</span></p><p><span>弄潮者，我老母的孩儿，</span></p><p><span>有多少次你们在我的梦中浮泛。现在你们在我更深的梦中，也就是我苏醒的时候驶来了。</span></p><p><span>我已预备好要走了，我的热望和帆篷一同扯满，等着风来。</span></p><p><span>我只要在这静止的空气中，再呼吸一口气，我只要再向后抛掷热爱的一瞥。</span></p><p><span>那时，我要站在你们中间，一个航海者群中的航海者。</span></p><p><span>还有你，这无边的大海，无眠的慈母，</span></p><p><span>只有你是江河和溪水的宁静与自由。</span></p><p><span>这溪流只还有一次的转折，一次林中的潺湲，</span></p><p><span>然后我要到你这里来，无量的涓滴归向无量的海洋。</span></p><p><span>当他行走的时候，他看见从远处有许多男女离开田园，急速地赶到城边来。</span></p><p><span>他听见他们叫着他的名字，在阡陌中彼此呼唤，报告他船的来临。</span></p><p><span>他对自己说：</span></p><p><span>别离的日子能成为会集的日子么？</span></p><p><span>我的薄暮实在可算是我的黎明么？</span></p><p><span>那些放下了耕田的犁耙，停止了榨酒的轮儿的人们，我将给他们什么呢？</span></p><p><span>我的心能成为一棵实果累累的树，可以采撷了分给他们么？</span></p><p><span>我的愿望能奔流如泉水，可以倾满他们的杯么？</span></p><p><span>我是一架全能者的手可以弹奏的琴，或是一管全能者可以吹弄的笛么？</span></p><p><span>我是一个寂静的寻求者，在寂静中，我发现了什么宝藏，可以放心地布施呢？</span></p><p><span>倘若这是我收获的日子，那么，何时何地我曾撒下了种子呢？</span></p><p><span>倘若这确是我举起明灯的时候，那么，灯内燃烧着的火焰，不是我点燃的。</span></p><p><span>空虚黑暗的我将举起我的灯，</span></p><p><span>守夜的人将要添上油，也点上火。</span></p><p><span>这些是他口中说出，还有许多没有说出的存在心头，因为他说不出自己心中更深的秘密。</span></p><p><span>他进城的时候，众人都来迎接，齐声地向他呼唤。</span></p><p><span>城中的长老走上前来说：</span></p><p><span>你不要再离开我们。</span></p><p><span>在我们的朦胧里，你是正午的潮音，你青春的气度，予我们以梦想。</span></p><p><span>你在我们中间不是一个异乡人，也不是一个客人，乃是我们的儿子及亲挚的爱者。</span></p><p><span>不要使我们的眼睛因渴望你的脸面而酸痛。</span></p><p><span>一班道人和女冠对他说：</span></p><p><span>不要让海波在这时把我们分开，把你在我们中间所度的岁月成了一个回忆。</span></p><p><span>你曾是一个在我们中间行走的神灵，你的影儿曾明光似的照亮我们的脸。</span></p><p><span>我们深深地爱着你。不过我们的爱没有声响，而又被轻纱蒙着。</span></p><p><span>但现在他要对你呼唤，要在你面前揭露。除非临到了别离的时候，“爱”永远会知道自己的深浅。</span></p><p><span>别的人也来向他恳求。他没有答话。他只低着头；站近他的人看见他的泪落在袜子上。他和众人慢慢地向殿前的广场走去。</span></p><p><span>有一个名叫爱尔美差（Almitra）的女子从圣殿里出来，她是一个预言者。</span></p><p><span>他以无限的温蔼注视着她。因为她是在他第一天进这城里的时候，最初寻找他相信他的人中之一。</span></p><p><span>她庆贺他，说：</span></p><p><span>上帝的先知，至高的探求者，你曾常向远处寻望你的航帆。</span></p><p><span>现在你的船儿来了，你必须归去。</span></p><p><span>你对于那回忆的故乡，和你更大愿望的居所的渴念，是这样的深切；我们的爱，不能把你系住，我们的需求，也不能把你拘留。</span></p><p><span>但在你别离以前，我们要请你对我们讲说真理。女冠：即女道人。</span></p><p><span>我们要把这真理传给我们的孩子，他们也传给他们的孩子，绵绵不绝。</span></p><p><span>在你的孤独里，你曾守卫我们的白日，在你的清醒里，你曾倾听我们睡梦中的哭泣和欢笑。</span></p><p><span>现在请把“真我”披露给我们，告诉我们你所知道的关于生和死中间的一切。</span></p><p><span>他回答说：</span></p><p><span>阿法利斯的民众啊，除了现时在你们灵魂里鼓荡的之外，我还能说什么呢？</span></p><h2><a name="论爱" class="md-header-anchor"></a><span>论爱</span></h2><p><span>于是爱尔美差说：请给我们谈爱。他举头望着民众，他们一时静默了。他用洪亮的声音说：当爱向你们召唤的时候，跟随着他，虽然他的路程是艰险而陡峻。当他的翅翼围着你们的时候，屈服于他，虽然那藏在羽翮中间的剑刃也许会伤害你们。当他对你们说话的时候，信从他，虽然他的声音会把你们的梦魂击碎，如同北风吹荒了林园。他虽升到你的最高处，抚惜你在日中颤动的枝叶，他也要降到你的根下，摇动你的根柢的一切关节，使之归土。如同一捆稻粟，他把你束聚起来。他舂打你使你赤裸。他筛分你使你脱壳。他磨碾你直至洁白。他揉搓你直至柔韧。这些都是爱要给你们做的事情，使你知道自己心中的秘密，在这知识中你便成了“生命”心中的一屑。假如你在你的疑惧中，只寻求爱的和平与逸乐，那不如掩盖你的裸露，而躲过爱的筛打，</span></p><p><span>而走入那没有季候的世界，在那里你将欢笑，却不是尽量的笑悦；你将哭注，却没有流干眼泪。</span></p><p><span>爱除自身外无施予，除自身外无接受。</span></p><p><span>爱不占有，也不被占有。</span></p><p><span>因为爱在爱中满足了。</span></p><p><span>不要想你能导引爱的路程，因为若是他觉得你配，他就导引你。</span></p><p><span>爱没有别的愿望，只要成全自己。</span></p><p><span>但若是你爱，而且需求愿望，就让以下的做你的愿望吧：</span></p><p><span>溶化了你自己，像溪流般对清夜吟唱着歌曲。</span></p><p><span>要知道过度温存的痛苦。</span></p><p><span>让你对于爱的了解毁伤了你自己；</span></p><p><span>而且甘愿地喜乐地流血。</span></p><p><span>清晨醒起，以喜飏的心来致谢这爱的又一日；</span></p><p><span>日中静息，默念爱的浓欢；</span></p><p><span>晚潮退时，感谢地回家。</span></p><p><span>然后在睡时祈祷，因为有被爱者在你的心中，有赞美之歌在你的唇上。</span></p><h2><a name="论婚姻" class="md-header-anchor"></a><span>论婚姻</span></h2><p><span>爱尔美差又说：夫子，婚姻怎样讲呢？他回答说：你们一块儿出世，也要永远合一。在死的白翼隔绝你们的岁月的时候，你们也要合一。不过在你们合一之中，要有间隙。让风在你们中间舞荡。彼此相爱，却不要做成爱的系链：只让他在你们灵魂的沙岸中间，做一个流动的海。彼此斟满了杯，却不要在同一杯中啜饮。彼此递赠着面包，却不要在同一块上取食。快乐地在一处舞唱，却仍让彼此静独，连琴上的那些弦也是单独的，虽然他们在同一的音调中颤动。彼此赠献你们的心，却不要互相保留。因为只有“生命”的手，才能把持你们的心。要站在一处，却不要太密迩：因为殿里的柱子，也是分立在两旁，橡树和松柏，也不在彼此的荫中生长。</span></p><h2><a name="论孩子" class="md-header-anchor"></a><span>论孩子</span></h2><p><span>于是一个怀中抱着孩子的妇人说：请给我们谈孩子。他说：你们的孩子，都不是你们的。乃是“生命”为自己所渴望的儿女。他们是借你们而来，却不是从你们而来。他们虽和你们同在，却不属于你们。</span></p><p><span>你们可以给他们以爱，却不可给他们以思想，</span></p><p><span>因为他们有自己的思想。</span></p><p><span>你们可以荫庇他们的身体，却不能荫庇他们的灵魂，</span></p><p><span>因为他们的灵魂，是住在“明日”的宅中，那是你们在梦中也不能想见的。</span></p><p><span>你们可以努力去模仿他们，却不能使他们来像你们，</span></p><p><span>因为生命是不倒行的，也不与“昨日”一同停留。</span></p><p><span>你们是弓，你们的孩子是从弦上发出的生命的箭矢。</span></p><p><span>那射者在无穷之中看定了目标，也用神力将你们引满，使他的箭矢迅疾而遥远地射了出去。</span></p><p><span>让你们在射者手中的“弯曲”成为喜乐吧；</span></p><p><span>因为他爱那飞出的箭，也爱了那静止的弓。</span></p><h2><a name="论施舍" class="md-header-anchor"></a><span>论施舍</span></h2><p><span>一个富人说：请给我们谈施予。</span></p><p><span>他回答说：</span></p><p><span>你把你的产业给人，那只算给了一点。</span></p><p><span>当你以身布施的时候，那才是真正的施予。</span></p><p><span>因为你的财产，岂不是你存留保守着的东西，恐怕“明日”或许需要它们么？</span></p><p><span>但是“明日”，那过虑的犬，跟着香客上圣城去，却把骨头埋在无痕迹的沙土里，“明日”能把什么给它呢？</span></p><p><span>除了需要的本身之外，需要还忧惧什么呢？</span></p><p><span>当你在井泉充溢的时候愁渴，那你的渴不是更难解么？</span></p><p><span>有人有许多财产，却只把一小部分给人——他们为求名而施予，那潜藏的欲念，使他们的礼物不完美。</span></p><p><span>有人只有一点财产，却全部都给人。</span></p><p><span>这些相信生命和生命的丰富的人，他们的宝柜总不空虚。</span></p><p><span>有人喜悦地施予，那喜悦就是他们的酬报。</span></p><p><span>有人无痛地施予，那无痛就是他们的洗礼。</span></p><p><span>也有人施予了，而不觉出施予的无痛，也不寻求快乐，也不有心为善；</span></p><p><span>他们的施予，如同那边山谷里的桂花，香气浮动在空际。</span></p><p><span>因请求而施予的，固然是好，而未受请求，只因默喻而施予的，是更好了：</span></p><p><span>对于乐善好施的人，去寻求需要他帮助的人的快乐，比施予还大。</span></p><p><span>有什么东西是你必须保留的呢？</span></p><p><span>必有一天，你的一切都要交付出来；</span></p><p><span>趁现在施予吧，这施予的时机是你自己的，而不是你的后人的。</span></p><p><span>你常说：“我要施予，却只要舍给那些配受施予者。”</span></p><p><span>你果园里的树木，和牧场上的羊群，却不这样说。</span></p><p><span>他们为要生存而施予，因为保留就是毁灭。</span></p><p><span>凡是配接受白日和黑夜的人们，都配接受你施予的一切。</span></p><p><span>凡配在生命的海洋里啜饮的，都配在你的小泉里舀满他的怀。</span></p><p><span>还有什么德行比接受的勇气、信心和善意还大呢？</span></p><p><span>有谁能使人把他们的心怀敞露，把他们的狷傲揭开，使你能看出他们赤裸的价值和无惭的骄傲？</span></p><p><span>先省察你自己是否配做一个施予者，是否配做一个施予的器皿。</span></p><p><span>因为实在说，那只是生命给予生命——你以为自己是施主，其实也不过是一个证人。</span></p><p><span>你接受的人们——你们都是接受者，——不要负起报恩的重担，恐怕你要把轭加在你自己和施者的身上。</span></p><p><span>不如与施者在礼物上一同展翅飞腾；</span></p><p><span>因为过于思量你们的欠负，就是怀疑了那以慈悲的大地为母的仁心。</span></p><h2><a name="论饮食" class="md-header-anchor"></a><span>论饮食</span></h2><p><span>一个开饭店的老人说：请给我们谈饮食。</span></p><p><span>他说：</span></p><p><span>我恨不得你们能借着大地的香气而生存，如同那“空气植物”受着阳光的供养。</span></p><p><span>既然你们必须杀生为食，且从新生的动物口中，夺他的母乳来止渴，那就让它成为一个敬神的礼节吧，</span></p><p><span>让你的肴馔摆在祭坛上，那是丛林中和原野上的纯洁清白的物品，为更纯洁清白的人们而牺牲的。</span></p><p><span>当你杀生的时候，心里对他说：</span></p><p><span>“在宰杀你的权力之下，我同样地也被宰杀，我也要同样地被吞食。</span></p><p><span>那把你送到我手里的法律，也要把我送到那更伟大者的手里。</span></p><p><span>你和我的血都不过是浇灌树的一种液汁。”当你咬嚼着苹果的时候，心里对他说：“你的子核要在我身中生长，你来世的嫩芽要在我心中萌茁，你的芳香要成为我的气息，我们要终年地喜悦。”在秋天，你在果园里摘葡萄榨酒的时候，心里说：“我也是一座葡萄园，我的果实也要摘下榨酒，和新酒一般，我也要被收存在永生的怀里。”在冬日，当你斟酒的时候，你的心要对每一杯酒歌唱：让那曲成为一首纪念秋天和葡萄园以及榨酒之歌。</span></p><h2><a name="论工作" class="md-header-anchor"></a><span>论工作</span></h2><p><span>一个农夫说：请给我们谈工作。</span></p><p><span>他回答说：</span></p><p><span>你工作为的是要与大地和大地的精神一同前进。</span></p><p><span>因为惰逸使你成为一个时代的生客，一个生命大队中的落伍者，这大队是庄严的，高傲而服从的，向着无穷前进。</span></p><p><span>在你工作的时候，你是一管笛，从你心中吹出时光的微语，变成音乐。你们谁肯做一根芦管，在万物合唱的时候，你独痴呆无声呢？</span></p><p><span>你们常听人说，工作是祸殃，劳力是不幸。</span></p><p><span>我却对你们说，你们工作的时候，你们完成了大地的深远的梦这一部，他指示你那梦是何时开头，</span></p><p><span>而在你劳力不息的时候，你确爱了生命。</span></p><p><span>从工作里爱了生命，就是通彻了生命最深的秘密。倘然在你的辛苦里，将有身之苦恼和养身之诅咒，写上你的眉间，则我将回答你，只有你眉间的汗，能洗去这些字句。</span></p><p><span>你们也听见人说，生命是黑暗的，在你疲瘁之中，你附和了那疲瘁的人所说的话。我说生命的确是黑暗的，除非是有了激励；一切的激励都是盲目的，除非是有了知识；一切的知识都是徒然的，除非是有了工作；一切的工作都是虚空的，除非是有了爱；当你仁爱地工作的时候，你便与自己、与人类联系为一。怎样才是仁爱的工作呢？从你的心中抽丝，织成布帛，仿佛你的爱者要来穿此衣裳。热情地盖造房屋，仿佛你的爱者要住在其中。温存地播种，喜悦地刈获，仿佛你的爱者要来吃这产物。这就是用你自己灵魂的气息，来充满你所制造的一切。要知道一切受福的古人，是在你上头看视着。</span></p><p><span>我常听见你们仿佛在梦中说：“那在蜡石上表现出他自己灵魂的形象的人，是比耕地的人高贵多了。</span></p><p><span>那捉住虹霓，传神地画在布帛上的人，是比织履的人强多了。”</span></p><p><span>我却要说：不在梦中，而在正午极清醒的时候，风对大橡树说话的声音，并不比对纤小的草叶所说的更甜柔；</span></p><p><span>只有用他的爱心，把风声变成甜柔的歌曲的人，是伟大的。</span></p><p><span>工作是眼能看见的爱。</span></p><p><span>倘若你不是欢乐而是厌恶地工作，那还不如撇下工作，坐在大殿的门边，去乞那些欢乐地工作的人的周济。</span></p><p><span>倘若你无精打采地烤着面包，你烤成的面包是苦的，只能救半个人的饥饿。</span></p><p><span>你若是怨望地压榨着葡萄酒，你的怨望，在酒里滴下了毒液。</span></p><p><span>倘若你像天使一般地唱，却不爱唱，你就把人们能听到白日和黑夜的声音的耳朵都塞住了。</span></p><h2><a name="论哀乐" class="md-header-anchor"></a><span>论哀乐</span></h2><p><span>一个妇人说：请你给我们讲欢乐与悲哀。</span></p><p><span>他回答说：</span></p><p><span>你的欢乐，就是你的去了面具的悲哀。</span></p><p><span>连你那涌溢欢乐的井泉，也常是充满了你的眼泪。</span></p><p><span>不然，又怎样呢？</span></p><p><span>悲哀的创痕在你身上刻得越深，你越能容受更多的欢乐。</span></p><p><span>你的盛酒的杯，不就是那曾在陶工的窑中燃烧的坯子么？</span></p><p><span>那感悦你的心神的笛子，不就是曾受尖刀挖刻的木管么？</span></p><p><span>当你欢乐的时候，深深地内顾你的心中，你就知道只不过是那曾使你悲哀的，又在使你欢乐。</span></p><p><span>当你悲哀的时候，再内顾你的心中，你就看出实在是那曾使你喜悦的，又在使你哭泣。</span></p><p><span>你们有些人说：欢乐大于悲哀。也有人说：不，悲哀是更大的。</span></p><p><span>我却要对你们说，他们是不能分开的。</span></p><p><span>他们一同来到，当这个和你同席的时候，要记住那个正在你床上酣眠。真的，你是天平般悬在悲哀与欢乐之间。只在盘中空洞的时候，你才能静止，持平。当守库者把你提起来，称他的金银的时候，你的哀乐就必须升降了。</span></p><h2><a name="论居室" class="md-header-anchor"></a><span>论居室</span></h2><p><span>一个泥水匠走上前来说：请给我们谈居室。</span></p><p><span>他回答说：</span></p><p><span>当你在城里盖一所房子之前，先在野外用你的想像盖一座凉亭。</span></p><p><span>因为你在黄昏时有家可归，而你那更迷茫更孤寂的漂泊的精魂，也有个归宿。</span></p><p><span>你的房屋是你的较大的躯壳。</span></p><p><span>他在阳光中发育，在夜的寂静中睡眠，而且不能无梦。你的房屋不做梦么？不梦想离开城市，登山入林么？</span></p><p><span>我愿能把你们的房子握在手里，撒种似的把他们洒落在丛林中与绿野上。</span></p><p><span>愿山谷成为你们的街市，绿径成为你们的里巷，使你们在葡萄园中相寻相访的时候，衣袂上带着大地的芬芳。</span></p><p><span>但这个一时还做不到。</span></p><p><span>在你们祖宗的忧惧里，他们把你们聚集得太近了。</span></p><p><span>这忧惧还要稍为延长，你们的城墙，也仍要把你们的家庭和你们的田地分开。</span></p><p><span>告诉我吧，阿法利斯的民众啊，你们的房子里有什么？你们锁门是为守护什么呢？</span></p><p><span>你们有“和平”，不就是那呈露好魄力的宁静和鼓励么？</span></p><p><span>你们有“回忆”，不就是那联跨你心峰的灿烂的弓桥么？</span></p><p><span>你们有“美”，不就是那把你的心从木石建筑上引到圣山的么？</span></p><p><span>告诉我，你们的房屋里有这些东西么？</span></p><p><span>或者你只有“舒适”和“舒适的欲念”，那诡秘的东西，以客人的身份混了进来渐做家人，终做主翁的么？</span></p><p><span>噫！他变成一个驯兽的人，用钩镰和鞭笞，使你较伟大的愿望变成傀儡。</span></p><p><span>他的手虽柔软如丝，他的心却是铁打的。</span></p><p><span>他催眠你，只须站在你的床侧，讥笑你肉体的尊严。</span></p><p><span>他戏弄你健全的感官，把他们塞放在蓟绒里，如同脆薄的杯盘。</span></p><p><span>真的，舒适之欲，杀害了你灵性的热情，又哂笑地在你的殡仪队中徐步。</span></p><p><span>但是，你们这些“太空”的儿女，你们在静中不息，你们不应当被网罗，被驯养。</span></p><p><span>你们的房子不应当作个锚，应当作个桅。它不应当作一片遮掩伤痕的闪亮的薄片，应当作那保护眼睛的睫毛。</span></p><p><span>你不应当为穿走门户而敛翅，也不应当为恐触屋顶而低头，也不应当为怕墙壁崩裂而停止呼吸。</span></p><p><span>你不应当住在那死人替活人筑造的坟墓里。</span></p><p><span>无论你的房屋是如何地壮丽与辉煌，也不应当使它隐住你的秘密，遮住你的愿望。</span></p><p><span>因为你里面的“无穷性”，是住在天宫里，那天宫是以晓烟为门户，以夜的静寂与歌曲为窗牖的。</span></p><h2><a name="论衣服" class="md-header-anchor"></a><span>论衣服</span></h2><p><span>一个织工说：请给我们谈衣服。他回答说：你们的衣服掩盖了许多的美，却遮不住丑恶。你们虽在衣服里可寻得隐秘的自由，却也寻得撅饰与羁勒了。我恨不得你们多用皮肤，而少用衣服去逢迎太阳和风。因为生命的气息是在阳光中，生命的把握是在风里。</span></p><p><span>你们中有人说：那纺织衣服给我们穿的是北风。</span></p><p><span>我也说：对的，是北风，</span></p><p><span>但他的机杼是可羞的，那使筋肌软弱的是他的线缕。</span></p><p><span>当他的工作完毕时，他在林中喧笑。</span></p><p><span>不要忘却“羞怯”只是遮挡“不洁”的眼目的盾牌。</span></p><p><span>在“不洁”完全没有了的时候，“羞怯”不就是心上的桎梏与束缚么？</span></p><p><span>也别忘了大地是欢喜和你的赤脚接触，风是希望和你的头发相戏的。</span></p><h2><a name="论买卖" class="md-header-anchor"></a><span>论买卖</span></h2><p><span>一个商人说：请给我们谈买卖。</span></p><p><span>他回答说：</span></p><p><span>大地贡献果实给你们，如果你们只晓得怎样独取，你们就不应当领受了。</span></p><p><span>在交易着大地的礼物里，你们将感到丰裕而满足。</span></p><p><span>然而若非用爱和公平来交易，则必有人沦为饕餮，有人沦为饿殍。</span></p><p><span>当在市场上，你们这些海上、田中和葡萄园里的工人，遇见了织工、陶工和采集香料的——</span></p><p><span>就应当祈求大地的主神，临到你们中间，来圣化天平，以及那较量价值的核算。</span></p><p><span>不要容游手好闲的人来参加你们的买卖，他们要以言语来换取你们的劳力。</span></p><p><span>你们要对这种人说：</span></p><p><span>“同我们到田间，或者跟我们的弟兄到海上去撒网；</span></p><p><span>因为海与陆地，对你们也和对我们一样的慈惠。”</span></p><p><span>倘若那吹箫的和歌舞的人来了，你们也应当买他们的礼物。</span></p><p><span>因为他们也是果实和乳香的采集者，他们带来的物事，虽系梦幻，却是你们灵魂上的衣食。</span></p><p><span>在你们离开市场以前，要看着没有人空手回去。</span></p><p><span>因为大地主神，不到你们每人的需要全都满足了以后，他不能在风中宁静地睡眠。</span></p><h2><a name="论罪与罚" class="md-header-anchor"></a><span>论罪与罚</span></h2><p><span>本城的法官中，有一个走上前来说：请给我们谈罪与罚。</span></p><p><span>他回答说：</span></p><p><span>当你的灵性随风飘荡的时候，</span></p><p><span>你孤零而失慎地对别人也就是对自己犯了过错。</span></p><p><span>为着所犯的过错，你必须去叩那受福者之门，就被怠慢地等候片刻。</span></p><p><span>你们的“神性”像海洋；</span></p><p><span>他永远是纯洁不染，</span></p><p><span>又像“以太”，他只帮助有翼者上升。</span></p><p><span>你们的“神性”也像太阳；</span></p><p><span>他不知道田鼠的径路，也不寻觅蛇虺的洞穴。</span></p><p><span>但是你们的“神性”，不是独居在你们里面。</span></p><p><span>在你们里面，有些仍是“人性”，有些还不成“人性”。</span></p><p><span>他只是一个未成形的侏儒，睡梦中在烟雾里蹒跚，自求觉醒。</span></p><p><span>我现在所要说的，就是你们的人性。</span></p><p><span>因为那知道罪与罪的刑罚的，是他，而不是你的“神性”，也不是烟雾中的侏儒。</span></p><p><span>我常听见你们论议到一个犯了过失的人，仿佛他不是你们的同人，只像是个外人，是个你们的世界中的闯入者。</span></p><p><span>我却要说连那圣洁和正直的，也不能高过于你们每人心中的至善，</span></p><p><span>所以那奸邪和懦弱的，也不能低过于你们心中的极恶。</span></p><p><span>如同一片树叶，除非得了全树的默许，方能独自变黄。</span></p><p><span>所以，那作恶者，若没有你们大家无形中的怂恿，也不会作恶。</span></p><p><span>如同一个队伍，你们一同向着你们的“神性”前进。</span></p><p><span>你们是道，也是行道的人。</span></p><p><span>当你们中有人跌倒的时候，他是为了他后面的人而跌倒，是一块绊脚石的警告。</span></p><p><span>是的，他也为他前面的人而跌倒，因为他们的步履虽然又快又稳，却没有把那绊脚石挪开。还有这个，虽然这些话会重压你的心：被杀者对于自己的被杀，不能不负咎，被劫者对于自己的被劫，不能不受责。真正的人，对于恶人的行为，也不能算无辜，清白的人，对于罪人的过犯，也不能算不染。你们不能把至公与不公，至善与不善分开；因为他们一齐站在太阳面前，如同织在一起的黑线和白线，黑线断了的时候，织工就要视察整块的布，也要察看那机杼。</span></p><p><span>你们中如有人要审判一个不忠诚的妻子，</span></p><p><span>让他拿天平来称一称她丈夫的心，拿尺来量一量他的灵魂。</span></p><p><span>让鞭挞“扰人者”的人，先察一察那“被扰者”的灵性。</span></p><p><span>你们如有人要以正义之名，砍伐一棵恶树，让他先察看树根；</span></p><p><span>他一定能看出那好的与坏的，能结实与不能结实的树根，都在大地的沉默的心中，纠结在一处。</span></p><p><span>你们这些愿持公开的法官，</span></p><p><span>你们怎样裁判那忠诚其外而盗窃其中的人？</span></p><p><span>你们又将怎样刑罚一个肉体受戮，而在他自己的心灵遭灭的人？</span></p><p><span>你们又将怎样控告那在行为上是刁猾、暴戾，</span></p><p><span>而在事实上也是被威逼、被虐待的人呢？</span></p><p><span>你们又将怎样责罚那悔心已经大于过失的人？</span></p><p><span>忏悔不就是你们所喜欢奉行的法定的公道么？</span></p><p><span>然而，你们却不能将忏悔放在无辜者的身上，也不能将他从罪人心中取出。</span></p><p><span>不期然地他要在夜中呼唤，使人们醒起，反躬自省。</span></p><p><span>你们这些愿意了解公道的人，若不在大光明中视察一切的行为，你们怎能了解呢？</span></p><p><span>只在那时，你们才知道直立与跌倒的，只是一个站在“侏儒性的黑夜”，与“神性的白日”的黄昏中的人。</span></p><p><span>也要知道那大殿的角石，并不高于那最低的基石。</span></p><h2><a name="论法律" class="md-header-anchor"></a><span>论法律</span></h2><p><span>一个律师说：我们的法律怎样呢，夫子？</span></p><p><span>他回答说：</span></p><p><span>你们喜欢立法，</span></p><p><span>却也更喜欢犯法。</span></p><p><span>如同那在海滨游戏的孩子，勤恳地建造了沙塔，然后又嬉笑地将它毁坏。</span></p><p><span>当你们建造沙塔的时候，海洋又送许多的沙土上来。</span></p><p><span>等你们毁坏那沙塔的时候，海洋又与你们一同哄笑。</span></p><p><span>真的，海洋常和天真的人一同哄笑。</span></p><p><span>可是，对于那班不以生命为海洋，不以人造的法律为沙塔的人，又当如何？</span></p><p><span>对于那以生命为岩石，以法律为可随意刻石的凿子的人，又当如何？</span></p><p><span>对于那憎恶舞者的跛人，又当如何？</span></p><p><span>对于那喜爱羁轭，却以林中的麋鹿为流离颠沛的小牛的人，又当如何？</span></p><p><span>对于自己不能蜕脱，却把一切蛇豸称为赤裸无耻的老蛇的人，又当如何？</span></p><p><span>对于那早赴婚筵，饱倦归来，却说“一切筵席都是违法，那些设筵的人都是犯法者”的人，又当如何？</span></p><p><span>对于这些人，除了说他们是站在日中以背向阳之外，我能说什么呢？</span></p><p><span>他们只看见自己的影子，他们的影子，就是他们的法律，</span></p><p><span>太阳对于他们，不只是一个射影者么？</span></p><p><span>承认法律，不就是佝偻着地上寻迹阴影么？</span></p><p><span>你们只向着阳光行走的人，那种地上的映影，能捉住你们么？</span></p><p><span>你们这乘风遨游的人，那种风信旗能指示你们的路程么？</span></p><p><span>如果你们不在任何人的囚室门前，</span></p><p><span>敲碎你们的镣铐，那种人造的法律能束缚你们么？</span></p><p><span>如果你们跳舞，却不撞击任何人的铁链，你们还怕什么法律呢？</span></p><p><span>如果你撕脱你们的衣裳，却不丢弃在任何人的道上，有谁能把你带去受审呢？</span></p><p><span>阿法利斯的民众呵，你们纵能闷住鼓音，松却琴弦，但有谁能禁止那云雀的高唱？</span></p><h2><a name="论自由" class="md-header-anchor"></a><span>论自由</span></h2><p><span>一个辩士说：请给我们谈自由。</span></p><p><span>他回答说：</span></p><p><span>在城门边，在炉火光前，我曾看见你们俯伏敬拜自己的自由，</span></p><p><span>甚至于像那些囚奴，在诛戮他们的暴君之前卑屈、颂赞。</span></p><p><span>在庙宇的林中，在城堡的影里，我曾看见你们中之最自由者，把自由像枷铐似的带上。</span></p><p><span>我心里忧伤：因为只有那求自由的愿望也成了羁饰，你们再不以自由为标杆为成就的时候，你们才是自由了。</span></p><p><span>当你们白日不是没有牵挂，黑夜也不是没有愿望与忧愁的时候，你们才是自由的。</span></p><p><span>不如说是当那些事物包围住你的生命，而你却能赤裸地无牵挂地超腾的时候，你们才是自由了。</span></p><p><span>但若不是在你们了解的晓光中，扭断了捆绑你们朝气的锁链，你们怎能超脱你们的白日和黑夜呢？</span></p><p><span>实话说，你们所谓的自由，就是最坚牢的锁链，虽然那链环闪烁在日光中，炫耀了你们的眼目。</span></p><p><span>“自由”岂不是你们自身的碎片，你们愿意将他抛弃换得自由么？</span></p><p><span>假如那是你们所要废除的一条不公平的法律，那法律却是你们用自己的手写在自己的额上的。</span></p><p><span>你们虽烧毁你们的律书、倾倒全海的水来冲洗你们法官的额，也不能把他抹掉。</span></p><p><span>假如那是一种你们所要抛掷的牵挂，那牵挂是自取的，不是别人勉强给你的。</span></p><p><span>假如那是一种你们所要除灭的恐怖，那恐怖的座位是在你的心中，而不在你所恐怖的人的手里。</span></p><p><span>真的，一切在你里面运行的事物，愿望与恐怖，憎恶与爱怜，追求与退避，都是永恒地互抱着。</span></p><p><span>这些事物在你里面运行，如同光明与阴影成对地胶粘着。</span></p><p><span>当阴影消灭的时候，遗留的光明又变成另一个光明的阴影。</span></p><p><span>这样，当你的自由脱去他的镣铐的时候，他本身又变成更大的自由的镣铐了。</span></p><h2><a name="论理性与热情" class="md-header-anchor"></a><span>论理性与热情</span></h2><p><span>于是那女冠又说：请给我们讲理性与热情。</span></p><p><span>他回答说：</span></p><p><span>你的心灵常常是个战场，在战场上，你的“理性与判断”和你的“热情与嗜欲”开战。</span></p><p><span>我恨不能在你的心灵中做一个调停者，使我可以让你们心中分子从竞争与衅隙变成合一与和鸣。</span></p><p><span>但除了你们自己也做个调停者，做个你们心中的各分子的爱者之外，我又能做什么呢？</span></p><p><span>你们的理性与热情，是你航行的灵魂的舵和帆。</span></p><p><span>假如你的帆或舵破坏了，你们只能泛荡，漂流，或在海中停住。</span></p><p><span>因为理性独自统治，是一个禁锢的权力，热情不小心的时候，是一个自焚的火焰。</span></p><p><span>因此，让你们的心灵将理性升到热情之最高点，让它歌唱：</span></p><p><span>也让他用理性来引导你们的热情，让它在每日复活中生存，如同大莺在它自己的灰烬上高翔。</span></p><p><span>我愿你们把判断和嗜欲，当作你们家中的两位佳客。</span></p><p><span>你们自然不能敬礼一客过于他客；因为过分关心于任何一客，必要失去两客的友爱与忠诚。</span></p><p><span>只因你们是大气中之一息，是丛林中之一叶，你们也要和他一同安息在理性中，运行在热情里。</span></p><h2><a name="论苦痛" class="md-header-anchor"></a><span>论苦痛</span></h2><p><span>一个妇人说：请给我们谈苦痛。</span></p><p><span>他说：</span></p><p><span>你的苦痛是你那包裹知识的皮壳的破裂。</span></p><p><span>连那果核也必须是破裂的，使果仁可以暴露在阳光中，所以你们也必须晓得苦痛。</span></p><p><span>倘若你能使你的心时常赞叹日常生活的神妙、你苦痛的神妙必不减于你的欢乐：</span></p><p><span>你要承受你心天的季候，如同你常常承受从田野上度过的四时。</span></p><p><span>你要静守，度过你心里凄凉的冬日。</span></p><p><span>许多的苦痛是你自择的。</span></p><p><span>那是你身中的医士，医治你病身的苦药。</span></p><p><span>所以你要信托这医生，静默安宁地吃他的药。</span></p><p><span>因为他的手腕虽重而辣，却是有冥冥的温柔之手指导着。</span></p><p><span>他带来的药杯，虽会焚灼你的嘴唇，那陶土却是陶工用他自己的神圣的眼泪来润湿调抟而成的。</span></p><h2><a name="论自知" class="md-header-anchor"></a><span>论自知</span></h2><p><span>一个男人说：请给我们讲自知。他回答说：在宁静中，你的心知道了白日和黑夜的奥秘。但你的耳朵渴求听取你心的知识的声音。你常在意念中所了解的，你愿能从语言中知道。你愿能用手指去抚触你的赤裸的梦魂。你要这样做是好的。你心灵隐秘的涌泉，必须升溢，吟唱着奔向大海；你无穷深处的宝藏，必须在你目前呈现。但不要用秤来衡量你未知的珍宝；也不要用杖竿和响带去探测你知识的浅深。因为“自我”乃是一个无边的海。</span></p><p><span>不要说，我找到了真理；只说，我找到了一条真理。</span></p><p><span>不要说，我找到了灵魂的道路；只说，我遇见了灵魂在我的道路上行走。</span></p><p><span>因为灵魂在一切道路上行走。</span></p><p><span>灵魂不只在一条道上走，也不是芦草似的生长。</span></p><p><span>灵魂像一朵千瓣的莲花，自己开放着。</span></p><h2><a name="论教授" class="md-header-anchor"></a><span>论教授</span></h2><p><span>一位教师说：请给我们讲教授。</span></p><p><span>他说：</span></p><p><span>除了那些已经半睡着，躺卧在你知识的晓光里的东西之外，没有人能向你启示什么。</span></p><p><span>那在殿宇的阴影里，在弟子群中散步的教师，他不是传授他的智慧，乃是传授他的忠信与仁慈。</span></p><p><span>假如他真是大智，他就不会命令你进入他的智慧之堂，却要引你到你自己心灵的门口。</span></p><p><span>天文家能给你讲述他对于太空的了解，他却不能把他的了解给你。</span></p><p><span>音乐家能给你唱出那充满太空的韵调，他却不能给你那聆受韵调的耳朵和应和韵调的声音。</span></p><p><span>精通数学的人，能说出度量衡的方位，他却不能引导你到那方位上去。</span></p><p><span>因为一个人不能把他理想的翅翼借给别人。</span></p><h2><a name="论友谊" class="md-header-anchor"></a><span>论友谊</span></h2><p><span>一个青年说：请给我们谈友谊。他回答说：你的朋友是你的有回应的需求。他是你用爱播种，用感谢收获的田地。他是你的饮食，也是你的火炉。因为你饥渴地奔向他，你向他寻求平安。</span></p><p><span>当你的朋友向你倾吐胸臆的时候，你不要怕说出心中的“否”，也不要瞒住你心中的“可”。</span></p><p><span>当他静默的时候，你的心仍要倾听他的心；</span></p><p><span>因为在友谊里，不用言语，一切的思想，一切的愿望，一切的希冀，都在无声的喜乐中发生而共享了。</span></p><p><span>当你与朋友别离的时候，不要忧伤。</span></p><p><span>因为你觉得他最可爱之点，当他不在时愈见清晰，正如登山者在平原上望山峰，也加倍地分明。</span></p><p><span>愿除了寻求心灵的加深之外，友谊没有别的目的。</span></p><p><span>因为那只寻求着要显露自身的神秘的爱，不算是爱，只算是一张撒下的网，只网住一些无益的东西。让你的最佳美的事物，都给你的朋友。假如他必须知道你潮水的下退，也让他知道你潮水的高涨。</span></p><p><span>你找他只为消磨光阴的人，还能算作你的朋友么？</span></p><p><span>你要在生长的时间中去找他。</span></p><p><span>因为他的时间是满足你的需要，不是填满你的空虚。</span></p><p><span>在友谊的温柔中，要有欢笑和共同的喜悦。</span></p><p><span>因为在那微末事物的甘露中，你的心能寻到他的清晓而焕发了精神。</span></p><h2><a name="论谈话" class="md-header-anchor"></a><span>论谈话</span></h2><p><span>一个学者说：请你讲谈话。</span></p><p><span>他回答说：</span></p><p><span>在你不安于你的思想的时候，你就说话；</span></p><p><span>在你不能再在你心的孤寂中生活的时候，你就要在你的唇上生活，而声音是一种消遣，一种娱乐。</span></p><p><span>在你许多的谈话里，思想半受残害。</span></p><p><span>思想是天空中的鸟，在语言的笼里，也许会展翼，却不会飞翔。</span></p><p><span>你们中间有许多人，因为怕静，就去找多言的人。</span></p><p><span>在独居的寂静里，会在他们眼中呈现出他们赤裸的自己，他们就想逃避。</span></p><p><span>也有些说话的人，并没有知识和考虑，却要启示一种他们自己所不明白的真理。</span></p><p><span>也有些人的心里隐存着真理，他们却不用言语诉说。</span></p><p><span>在这些人的胸怀中，心灵是居住在有韵调的寂静里。</span></p><p><span>当你在道旁或市场遇见你朋友的时候，让你心中的灵，运用你的嘴唇，指引你的舌头。</span></p><p><span>让你声音里的声音，对他耳朵的耳朵说话：</span></p><p><span>因为他的灵魂要噙住你心中的真理。</span></p><p><span>如同酒光被忘却，酒杯也不存留，而酒味却要永远被忆念。</span></p><h2><a name="论时光" class="md-header-anchor"></a><span>论时光</span></h2><p><span>一个天文家说：夫子，时光怎样讲呢？他回答说：你要测量那不可量、不能量的时间。你要按照时辰与季候来调节你的举止，引导你的精神。你要把时光当作一条溪水，你要坐在岸旁，看他流逝。</span></p><p><span>但那在你里面无时间性的“我”，却觉悟到生命的无穷。</span></p><p><span>也知道昨日只是今日的回忆，而明日只是今日的梦想。</span></p><p><span>那在你里面歌唱着、默想着的，仍住在那第一刻在太空散布群星的圈子里。</span></p><p><span>你们中间谁不觉得他的爱的能力是无穷的呢？</span></p><p><span>又有谁不觉得那爱，虽是无穷，却是在他本身的中心绕行，不是从这爱的思念移到那爱的思念；也不从这爱的行为移到那爱的行为么？</span></p><p><span>而且时光岂不也像爱，是不可分析，没有罅隙的么？</span></p><p><span>但若在你的意想里，你定要把时光分成季候，那就让每一季候围绕住其他的季候。</span></p><p><span>也让今日用回忆拥抱着过去，用希望拥抱着将来。</span></p><h2><a name="论善恶" class="md-header-anchor"></a><span>论善恶</span></h2><p><span>一位城中的长老说：请给我们谈善恶。</span></p><p><span>他回答说：</span></p><p><span>我能谈你们的善性，却不能谈恶性。</span></p><p><span>因为，什么是恶，不只是“善”被他自身的饥渴所困苦么？</span></p><p><span>的确，在“善”饥饿的时候，他肯向黑洞中觅食，渴的时候，他也肯喝死水。</span></p><p><span>当你与自己合一的时候便是善。</span></p><p><span>当你不与自己合一的时候，却也不是恶。</span></p><p><span>因为一个隔断的院宇，不是贼窝；只不过是个隔断的院宇。</span></p><p><span>一只船失了舵，也许会在礁岛间无目的地飘荡，而却不至于沉入海底。</span></p><p><span>当你努力要牺牲自己的时候便是善。</span></p><p><span>当你想法自利的时候，却也不是恶。</span></p><p><span>因为当你设法自利的时候，你不过是土里的树根，在大地的胸怀中啜吸。</span></p><p><span>果实自然不能对树根说：你要像我，丰满成熟，永远贡献出你最丰满的一部分。</span></p><p><span>因为，在果实，贡献是必需的，正如吸收是树根所必需的一样。</span></p><p><span>当你在言谈中完全清醒的时候，你是善的。</span></p><p><span>当你在睡梦中，舌头无意识地摆动的时候，却也不是恶。</span></p><p><span>连那错误的言语，也有时能激动柔弱的舌头。</span></p><p><span>当你坚勇地走向目标的时候，你是善的。</span></p><p><span>你颠顿而行，却也不是恶。</span></p><p><span>连那些跛者，也不倒行。</span></p><p><span>但你们这些勇健而迅速的人，要警醒，不要在跛者前面颠顿，自以为是仁慈。在无数的事上，你是善的，在你不善的时候，你也不是恶。你只是流连，荒亡。可怜那麋鹿不能教给龟鳖快走。</span></p><p><span>在你冀求你的“大我”的时候，便隐存着你的善性：这种冀求是你们每人心中都有的。</span></p><p><span>对于有的人，这种冀求是奔越归海的急湍，挟带着山野的神秘与林木的讴歌。</span></p><p><span>在其他的人，是在转弯曲折中迷途的缓流的溪水，在归海的路上滞留。</span></p><p><span>但是不要让那些冀求深的人，对冀求浅的人说：“你为何这般迟钝？”</span></p><p><span>因为那真善的人，不问赤裸的人说：“你的衣服在哪里？”也不问那无家的人：“你的房子怎样了？”</span></p><h2><a name="论祈祷" class="md-header-anchor"></a><span>论祈祷</span></h2><p><span>一个女冠说：请给我们谈祈祷。</span></p><p><span>他回答说：</span></p><p><span>你们总在悲痛或需要的时候祈祷，我愿你们也在完满的欢乐中，在丰富的日子上祈祷。</span></p><p><span>因为祈祷不就是你们的自我在活的“以太”中开展么？</span></p><p><span>假若向太空倾吐出你们心中的黑夜是个安慰，那么倾吐出你们心中的晓光也是个喜乐。</span></p><p><span>假若在你的灵魂命令你祈祷的时候，你只能哭泣，她也要从你的哭泣中反复地鼓励你，直到你笑悦为止。</span></p><p><span>在你祈祷的时候，你超凡高举，在空中你遇到了那些和你在同一时辰祈祷的人，除了那些祈祷时辰之外，你不会遇到他们。</span></p><p><span>那么，让你那冥冥的殿宇的朝拜，只算个欢乐及甜柔的聚会吧。</span></p><p><span>因为假如你进入殿宇，除了请求之外，没有别的目的，你将不能被接受；</span></p><p><span>假如你进人殿宇，只为要卑屈自己，你也并不被提高。</span></p><p><span>甚至于你进入殿宇，只为他人求福，你也不被嘉纳。</span></p><p><span>只要你进到了那冥冥的殿宇，那就够了。我不能教给你们怎样用言语祈祷。</span></p><p><span>而且我也不能传授给你那大海、丛林和群山的祈祷。</span></p><p><span>但是你们生长在群山、丛林和大海之中的人，能在你们心中默会他们的祈祷。</span></p><p><span>假如你在夜的肃默中倾听，你会听见他们在平静中说：</span></p><p><span>你的愿望就是我们的愿望。</span></p><p><span>你的神力转移了你赐给我们的黑夜，成为白日。</span></p><p><span>我们不能向你求什么，因为在我们起念之前，你已经知道了我们的需要：</span></p><p><span>你是我们的需要；在你把自己多赐予我们的时候，你把一切都赐给我们了。</span></p><h2><a name="论逸乐" class="md-header-anchor"></a><span>论逸乐</span></h2><p><span>有个每年进城一次的隐士，走上前来说：给我们谈逸乐。他回答说：逸乐是一阕自由的歌，却不是自由。是你的愿望所开的花朵，却不是所结的果实。是从深处到高处的招呼，却不是深，也不是高。是闭在笼中的翅翼，却不是被围绕住的太空。实话说，逸乐只是一阕自由的歌。我愿意你们全心全意地歌唱，我却不愿你们在歌唱中迷恋。</span></p><p><span>你们中间有些年轻的人，寻求逸乐，似乎这便是世上的一切他们已被裁判、被谴责了。我不要裁判、谴责他们，我要他们去寻求。因为他们必会寻到逸乐，但不止找到她一人；她有七个姊妹，最小的比逸乐还娇媚。你们没听见过有人因要挖掘树根却发现了宝藏么？</span></p><p><span>你们中间有些老人，想起逸乐时总带些懊悔，如同想起醉中所犯的过失。</span></p><p><span>然而懊悔只是心灵的蒙蔽，而不是心灵的惩罚。</span></p><p><span>他们想起逸乐时应当带着感谢，如同秋收对于夏季的感谢。但是假如懊悔能予他们以安慰，就让他们得安慰吧。</span></p><p><span>你们中间有的不是寻求的青年人，也不是追忆的老年人；</span></p><p><span>在他们畏惧寻求与追忆之中，他们远离了一切的逸乐，他们深恐疏远了或触犯了心灵。</span></p><p><span>然而他们的放弃，就是逸乐了。</span></p><p><span>这样，他们虽用震颤的手挖掘树根，他们也找到宝藏了。</span></p><p><span>告诉我，谁能触犯心灵呢？</span></p><p><span>夜莺能触犯夜的静默么，萤火能触犯星辰么？</span></p><p><span>你们的火焰和烟气能使风觉得负载么？</span></p><p><span>你们想心灵是一池止水，你能用竿子去搅拨他吗？</span></p><p><span>常常在你拒绝逸乐的时候，你只是把欲望收藏在你心身的隐处。</span></p><p><span>谁知道在今日似乎避免了的事情，等于明日不会再浮现呢？</span></p><p><span>连你的身体都知道他的遗传与正当的需要，而不肯被欺骗。</span></p><p><span>你的身体是你灵魂的琴，</span></p><p><span>无论他发出甜美的音乐或嘈杂的声响，那都是你的。</span></p><p><span>现在，你们在心中自问：“我们如何辨别逸乐中的善与不善呢？”</span></p><p><span>到你的田野与花园里去，你就知道在花中采蜜是蜜蜂的娱乐；但是，将蜜汁送给蜜蜂也是花的娱乐。</span></p><p><span>因为对于蜜蜂，花是他生命的泉源，</span></p><p><span>对于花，蜜蜂是她恋爱的使者，</span></p><p><span>对于蜂和花，两下里，娱乐的接受是一种需要与欢乐。阿法利斯的民众啊！在娱乐中你们应当像花朵与蜜蜂。</span></p><h2><a name="论美" class="md-header-anchor"></a><span>论美</span></h2><p><span>一个诗人说：请给我们谈美。</span></p><p><span>他回答说：</span></p><p><span>你们到哪里追求美，除了她自己做了你的道路，引导着你之外，你如何能找着她呢？</span></p><p><span>除了她做了你的言语的编造者之外，你如何能谈论她呢？</span></p><p><span>冤抑的、受伤的人说：“美是仁爱的、和柔的，</span></p><p><span>如同一位年轻的母亲，在她自己的光荣中半含着羞涩，在我们中间行走。”</span></p><p><span>热情的人说：“不，美是一种全能的可畏的东西。</span></p><p><span>暴风似的，撼摇了上天下地。”</span></p><p><span>疲乏的、忧苦的人说：“美是温柔的微语，在我们心灵中说话。</span></p><p><span>她的声音传达到我们的寂静中，如同微晕的光，在阴影的恐惧中颤动。”</span></p><p><span>烦躁的人却说：“我们听见她在万山中叫号，</span></p><p><span>与她的呼声俱来的，有兽蹄之声、振翼之音与狮子之吼。”</span></p><p><span>在夜里守城的人说：“美要与晓暾从东方一齐升起。”</span></p><p><span>在日中的时候，工人和旅客说：“我们曾看见她凭倚在落日的窗户上俯视大地。”</span></p><p><span>在冬日，阻雪的人说：“她要和春天一同来临，跳跃于山峰之上。”</span></p><p><span>在夏日的炎热里，刈者说：“我们曾看见她与秋叶一同跳舞，我们也看见她的发中有一堆白雪。”这些都是他们关于美的谈说，实际上，你却不是谈她，只是谈着你那未曾满足的需要。美不是一种需要，只是一种欢乐。她不是干渴的口，也不是伸出的空虚的手，却是发焰的心、陶醉的心灵。她不是那你能看到的形象、能听到的歌声，却是你虽闭目时也能看见的形象，掩耳时也能听见的歌声。她不是犁痕下树皮中的液汁，也不是结系在兽爪间的禽鸟。她是一座永远开花的花园，一群永远飞翔的天使。</span></p><p><span>阿法利斯的民众呵，在生命揭露圣洁的面容的时候的美，就是生命。但你就是生命，你也是面纱。</span></p><p><span>美是永生揽镜自照。</span></p><p><span>你就是永生，你也是镜子。</span></p><h2><a name="论宗教" class="md-header-anchor"></a><span>论宗教</span></h2><p><span>一个老道人说：请给我们谈宗教。</span></p><p><span>他说：</span></p><p><span>这一天中我曾谈了别的么？</span></p><p><span>宗教岂不是一切的功德、一切的反省，</span></p><p><span>或者那不是功德，也不是反省，只是在凿石或织布时，灵魂中永远涌溢的一种叹异、一阵惊讶么？</span></p><p><span>谁能把他的信心和行为分开，把他的信仰和事业分开呢？</span></p><p><span>谁能把时间展现在面前。</span></p><p><span>你的一切光阴都是那在太空中鼓动的翅翼，从自我飞到自我。</span></p><p><span>那穿上“道德”，只如同穿上他的最美的衣服的人，还不如赤裸着，</span></p><p><span>太阳和风不会把他的皮肤裂成洞孔。</span></p><p><span>那把他的举止范定在伦理之内的，是把善鸣之鸟囚在笼里。</span></p><p><span>最自由的歌声，不是从竹木弦线上发出的。</span></p><p><span>那以“礼拜”为窗户的人，开启而又关上，他还没有探访到他心灵之宫，那里的窗户是天天开启的。你的日常生活，就是你的殿宇、你的宗教。何时你进去，把你的一切都带了去。带着犁耙和铁炉、木槌和琵琶，</span></p><p><span>这些你为着需要或怡情而制造的物件。</span></p><p><span>因为在梦幻中，你不能超升到比你的成就还高，也不至于坠落到比你的失败还低。</span></p><p><span>你也要把一切的人都带着：</span></p><p><span>因为在钦慕上，你不能飞跃得比他们的希望还高，也不能卑屈得比他们的失望还低。</span></p><h2><a name="论死亡" class="md-header-anchor"></a><span>论死亡</span></h2><p><span>爱尔美差开口了，说：现在我们愿意问“死”。</span></p><p><span>他说：你愿知道死的奥秘。</span></p><p><span>但是，除了在生命的心中寻求以外，你们怎能寻见呢？</span></p><p><span>那夜中张目的袅鸟，它的眼睛在白昼是盲瞎的，不能揭露光明的神秘。</span></p><p><span>假如你真要瞻望死的灵魂，你当对生的肉体大大地开展你的心。</span></p><p><span>因为生和死是一件事，如同江河与海洋也是一件事。</span></p><p><span>在你的希望和愿欲的深处，隐藏着你对于来生的默识；</span></p><p><span>如同种子在雪下梦想，你们的心也在梦想着春天。信赖一切的梦境吧，因为在那里面隐藏着永生之门。</span></p><p><span>你们的怕死，只是像一个牧人，当他站在国王的座前，被御手恩抚时的战栗。</span></p><p><span>在战栗之下，牧人岂不因为他身上已有了国王的手而喜悦么？</span></p><p><span>可是，他岂不更注意到他自己的战栗么？除了在风中裸立、在日下消融之外，“死”还是什么呢？只在你们从沉默的河中啜饮时，才真能歌唱。只在你们达到山巅时，你们才开始攀援。只在大地索取你的四肢时，你们才真正地跳舞。</span></p><h2><a name="言别" class="md-header-anchor"></a><span>言别</span></h2><p><span>现在已是黄昏了。</span></p><p><span>于是那女预言者爱尔美差说：愿这一日，这地方，与你讲话的心灵都蒙福佑。</span></p><p><span>他回答说：说那话的是我么？我不也是一个听者么？</span></p><p><span>他走下殿阶，一切的人都跟着他，他上了船，站在舱面。</span></p><p><span>转面向着大众，他提高了声音说：</span></p><p><span>阿法利斯的民众啊，风命令我离开你们了。</span></p><p><span>我虽不像风那般的迅急，我也必须去了。</span></p><p><span>我们这些漂泊者，永远地寻求更寂寞的道路，我们不在安歇的时地启程，朝阳与落日也不在同一地方看见我们。</span></p><p><span>大地在睡眠中时，我们仍是行路。</span></p><p><span>我们是那坚牢植物的种子，在我们的心成熟丰满的时候，就交给大风纷纷吹散。</span></p><p><span>我在你们中间的日子是很短促的，而我所说的话是更短了。</span></p><p><span>但等到我的声音在你们的耳中模糊，我的爱在你们的记忆中消灭的时候，我要重来。</span></p><p><span>我要以更丰满的心，更受灵感的唇说话。</span></p><p><span>是的，我要随着潮水归来，</span></p><p><span>虽然死要遮藏我，更大的沉默要包围我，我却仍要寻求你们的了解。</span></p><p><span>而且我这寻求不是徒然的。</span></p><p><span>假如我所说的都是真理，这真理要在更清澈的声音中、更明白的言语里，显示出来。</span></p><p><span>我将与风同去，却不是坠入虚空；</span></p><p><span>假如这一天不是你们的需要和我的爱的满足，那就让这个算是一个应许，直到践言的一天。</span></p><p><span>人的“需要”会变换，但他的爱是不变的，他的“爱必须满足需要”的愿望，也是不变的。</span></p><p><span>所以你要知道，我将在更大的沉默中归来。</span></p><p><span>那在晓光中消散，只留下露水在田间的烟雾，是要上升凝聚在云中，化雨下降。</span></p><p><span>我也未尝不像这烟雾。</span></p><p><span>你们的心搏曾在我的心中，你们的呼吸曾在我的脸上，我都认识你们。</span></p><p><span>是的，我知道你们的喜乐与哀痛，在你们的睡眠中，你们的梦就是我的梦。</span></p><p><span>我在你们中间常像山间的湖水。</span></p><p><span>我照见了你们的高峰与峭崖，以及你们思想与愿望的徘徊的云影。</span></p><p><span>你们的孩子的欢笑、你们的青年的想望，都溪泉似的流到我寂静之中。</span></p><p><span>当它流入我心中深处的时候，这溪泉仍是不停地歌唱。但还有比欢笑更甜柔、比想慕更伟大的东西流到。那是你们身中的“无穷性”；你们在这“巨人”里面，都不过是血脉与筋腱，</span></p><p><span>在他的吟诵中，你们的歌音只不过是无声的颤动。</span></p><p><span>只因为在这巨大里，你们才伟大，</span></p><p><span>我因为关心他，才关心你们、怜爱你们。</span></p><p><span>因为若不是在这阔大的空间里，“爱”能达到多远呢？</span></p><p><span>有什么幻象、什么期望、什么臆断能够无碍地高翔呢？</span></p><p><span>在你们本性中的巨人，如同一株缀满苹花的大椽树。</span></p><p><span>他的神力把你缠系在地上，他的香气把你超升入高空，在他的“永存”之中，你永不死。</span></p><p><span>你们曾听说过，像一条锁链，你们是脆弱的链环中最脆弱的一环。</span></p><p><span>但这不完全是真的。你也是坚牢的链环中最坚牢的一环。</span></p><p><span>以你最小的事功来衡量你，如同以柔弱的泡沫，来核计大海的威权。</span></p><p><span>以你的失败来论断你，就是怨责四季之常变。</span></p><p><span>是呵，你们像大海，</span></p><p><span>那重载的船舶，停在你的岸边待潮，你们虽似大海，也不能催促你的潮水。</span></p><p><span>你们也像四季，</span></p><p><span>虽然在冬天的时候，你们拒绝了春日，</span></p><p><span>你们的春日，和你们一同静息，他在睡中微笑，并不怨嗔。</span></p><p><span>不要想我说这话是要使你们彼此说：“他夸奖得好，他只看见我们的好处。”</span></p><p><span>我不过用言语说出你们意念中所知道的事情。</span></p><p><span>言语的知识不只是无言的知识的影子么？</span></p><p><span>你们的意念和我的言语，都是从封缄的记忆里来的波浪，这记忆是保存下来的我们的昨日。</span></p><p><span>也是大地还不认识我们也不认识她自己，正在混沌中受造的太古的白日和黑夜的记录。</span></p><p><span>哲人们曾来过，将他们的智慧献给你们。我来却是领取你们的智慧：</span></p><p><span>要知道，我找到了比智慧更伟大的东西。</span></p><p><span>那就是你们心里愈聚愈旺的火焰似的心灵。</span></p><p><span>你却不关心他的发展，只哀悼你岁月的凋残。</span></p><p><span>那是生命在宇宙的大生命中寻求扩大，而躯壳却在恐惧坟墓。</span></p><p><span>这里没有坟墓。</span></p><p><span>这些山岭和平原只是摇篮和垫脚石，</span></p><p><span>无论何时你从祖宗坟墓上走过，你若留意，你就会看见你们自己和子女们在那里携手跳舞。</span></p><p><span>真的，你们常在不知晓中作乐。</span></p><p><span>别人曾来到这里，为了他们在你们信仰上的黄金般的应许，你们所付与的只是财富、权力与光荣。</span></p><p><span>我所给予的还不及应许，而你们待我却更慷慨。</span></p><p><span>你们将生命的更深的渴求给予了我。</span></p><p><span>真的，对那把一切目的变作枯唇，将一切生命变作泉水的人，没有比这个更大的礼物了。</span></p><p><span>这便是我的荣誉与报酬，——</span></p><p><span>当我到泉边饮水的时候，我觉得那流水也在渴着；</span></p><p><span>我饮水的时候，水也饮我。你们中有人责备我在领受礼物上是太狷傲、太羞怯了。在领受劳金上我是太骄傲了，在领受礼物上却不如此。为此，我正要祝福你们：你们给予了许多，却不知道你们已经给予。真的，“慈悲”自己看镜的时候，变成石像。“善行”自赐嘉名的时候，变成了诅咒的根源。你们中有人说我高蹈，与我自己的“孤独”对饮。你们也说过：“他与山林谈论却不同人说话。他独自坐在山巅，俯视我们的城市。”我确曾攀登高山，孤行远地。便除了在更高更远之外，我怎能看见你们呢？除了相远之外，人们怎能相近呢？</span></p><p><span>还有人在沉默中对我呼唤，他们说：“异乡人，异乡人，‘圣高’的爱慕者，为什么你住在那鹰鸟做巢的山峰上呢？</span></p><p><span>为什么你要追求那不能达到的事物呢？</span></p><p><span>在你的窝巢中，你要网罗什么样的风雨，</span></p><p><span>要捕取天空中哪一种的虚幻的飞鸟呢？</span></p><p><span>加入我们吧。</span></p><p><span>你下来用我们的面包充饥，用我们的醇酒解渴吧。”</span></p><p><span>在他们灵魂的静默中，他们说了这些话；</span></p><p><span>但是，他们若再静默些，他们就知道我所要网罗的，只是你们的喜乐和哀痛的奥秘。</span></p><p><span>我所要捕取的，只是你们在天空中飞行的“大我”。猎者也曾是猎品；因为从我弓上射出的箭矢，有许多只是瞄向我自己的胸膛。</span></p><p><span>并且那飞翔者也曾是爬行者；</span></p><p><span>因为我的翅翼在日下展开的时候，在地上的影儿却是一个龟鳖。</span></p><p><span>我是信仰者也曾是怀疑者；</span></p><p><span>因为我常常用手指抚触自己的伤痕，使我对你们有更大的信仰与认识。凭着这信仰与认识，我说：你们不是幽闭在躯壳之内，也不禁锢在房舍与田野之中。你们的“真我”是住在云间，与风同游。你们不是在日中葡甸取暖，在黑暗里钻穴求安的一只动物，却是一件自由的物事、一个包涵大地在以太中运行的魂灵。如果这是模棱的言语，就不必求把这些话弄明白。模糊与混沌是万物的起始，却不是终结。我愿意你们当我是个起始。生命，与一切有生，都隐藏在烟雾里，不在水晶中。谁知道水晶就是凝固的云雾呢？</span></p><p><span>在忆念我的时候，我愿你们记着这个：</span></p><p><span>你们心中最软弱、最迷乱的，就是那最坚强、最刚决的。</span></p><p><span>不是你的呼吸使你的骨骼竖立坚强吗？</span></p><p><span>不是一个你觉得从未做过的梦，建造了你的城市，形成了城中的一切吗？你如能看见你呼吸的潮汐，你就看不见别的一切。你如能听见那梦想的微语，你就听不见别的声音。你看不见，也听不见，这却是好的。那蒙在你眼上的轻纱，也要被包扎这纱的手揭去；那塞在你耳中的泥土，也要被那填塞这土的手指戳穿。你将要看见，你将要听见。你也不为曾经聋聩而悲悔。因为在那时候，你要知道万物的潜隐的目的，你要祝福黑暗与祝福光明一样。</span></p><p><span>他说完这些话，举目四顾，他看见他船上的舵工凭舵而立，凝视着那涨满的风帆，又望着无际的天空。</span></p><p><span>他说：</span></p><p><span>耐心的，我的船主是太耐心的了。</span></p><p><span>大风吹着，帆篷也烦躁了；</span></p><p><span>连船舵也急要启程；</span></p><p><span>我的船主却静候着我说完话。</span></p><p><span>我的水手们，听见了那更大的海的啸歌，他们也耐心地听着我。</span></p><p><span>现在他们不能再等待了。</span></p><p><span>我预备好了。</span></p><p><span>山泉已流入大海，那伟大的母亲又将他的儿子抱在胸前。</span></p><p><span>别了，阿法利斯的民众啊！</span></p><p><span>这一天完结了。</span></p><p><span>他在我们心上闭合，如同一朵莲花在她自己的“明日”上合闭一样。</span></p><p><span>在这里所付与我们的，我们要保藏起来，</span></p><p><span>如果这还不够，我们还必须重聚，齐向那给予者伸手。</span></p><p><span>不要忘了我还要回到你们这里来。</span></p><p><span>一会儿的工夫，我的“愿望”又要聚些泥土，形成另一个躯壳。</span></p><p><span>一会儿的工夫，在风中休息片刻，另一个妇人又要孕怀着我，</span></p><p><span>我向你们，和我曾在你们中度过的青春告别了。</span></p><p><span>不过是昨天，我们曾在梦中相见。</span></p><p><span>在我的孤寂中，你们曾对我歌唱，因着你们的渴慕，我曾在空中建立了一座高塔。</span></p><p><span>但现在我们的睡眠已经飞走，我们的梦想已经过去，也不是破晓的时候了。</span></p><p><span>中天的日影正照着我们，我们的半醒已变成了完满的白日，我们必须分手了。</span></p><p><span>如果在记忆的朦胧中，我们再要会见，我们再在一起谈论，你们也要对我唱更深沉的歌曲。</span></p><p><span>如果在另一梦中，我们要再握手，我们要在空中再筑一座高塔。</span></p><p><span>说着话，他向水手们挥手作势，他们立刻拔起锚儿，放开船儿，向东驶行。</span></p><p><span>从人民口里发出的同心的悲号，在尘沙中飞扬，在海面上奔越，如同号筒的声响。</span></p><p><span>只有爱尔美差静默着，凝望着，直至那船渐渐消失在烟雾之中。</span></p><p><span>大众都散了，她仍独自站在海岸上，心中忆念着他所说的：</span></p><p><span>“一会儿的工夫，在风中休息片刻，另一个妇人又要孕怀着我。”</span></p><p><span>沙与沫</span></p><p><span>冰心译</span></p><p><span>沙与沫</span></p><p><span>我永远在沙岸上行走，在沙土和泡沫的中间。高潮会抹去我的脚印，风也会把泡沫吹走。但是，海洋和沙岸却将永远存在。</span></p><p><span>我曾抓起一把烟雾。</span></p><p><span>然后，我伸掌一看，哎哟，烟雾变成一个虫子。</span></p><p><span>我把手握起再伸开一看，手里却是一只鸟。</span></p><p><span>我再把手握起又伸开，在掌心里站着一个容颜忧郁、向天仰首的人。</span></p><p><span>我又把手握起，当我伸掌的时候，除了烟雾以外一无所有。</span></p><p><span>我听到了一支绝顶甜柔的歌曲。</span></p><p><span>仅仅在昨天，我认为我自己只是一个碎片，无韵律地在生命的穹苍中颤抖。</span></p><p><span>现在我晓得，我就是那穹苍，一切生命都是在我里面有韵律地转动的碎片。</span></p><p><span>他们在觉醒的时候对我说：“你和你所居住的世界，只不过是无边海洋的无边沙岸上的一粒沙子。”</span></p><p><span>在梦里我对他们说：“我就是那无边的海洋，大千世界只不过是我的沙岸上的沙粒。”</span></p><p><span>只有一次把我窘得哑口无言。就是当一个人问我“你是谁？”的时候。</span></p><p><span>我们是有海洋以前千万年的扑腾着、飘游着、追求着的生物，森林里的风把语言给予了我们。</span></p><p><span>那么，我们怎能以昨天的声音来表现我们心中的远古年代呢？斯芬克斯只说过一次话。斯芬克斯说：“一粒沙子就是一片沙漠，一片沙漠就是一粒沙子，现在再让我们沉默下去吧！”我听到了斯芬克斯的话，但是我不懂得。</span></p><p><span>我看到过一个女人的脸，我就看到了她所有的还未生出的儿女。</span></p><p><span>一个女人看了我的脸，她就认得了在她生前已经死去的我的历代祖宗。</span></p><p><span>我想使自己完满起来。但是，除非我能变成一个上面住着理智的生物的星球，此外还有什么可能呢？</span></p><p><span>这不是每一个人的目标吗？</span></p><p><span>一粒珍珠是痛苦围绕着一粒沙子所建造起来的庙宇。</span></p><p><span>是什么愿望围绕着什么样的沙粒，建造起我们的躯体呢？</span></p><p><span>当把我这块石子丢在奇妙的湖里的时候，我以无数的圈纹扰乱了它的表面。</span></p><p><span>当我落到深处的时候，我就变得十分安静了。给我静默，我将向黑夜挑战。当我的灵魂和肉体由相爱而结婚的时候，我就得到了重生。</span></p><p><span>从前，我认识一个听觉极其锐敏的人，但是他不能说话。在一个战役中他丧失了舌头。</span></p><p><span>现在，我知道在这伟大的沉默来到以前，这个人打过的是什么样的仗。我为他的死亡而高兴。</span></p><p><span>这世界为我们两个人是不够大的。</span></p><p><span>我在埃及的沙土上躺了很久，沉默着而且忘却了季节。</span></p><p><span>然后，太阳把生命给了我，我起来在尼罗河岸上行走。</span></p><p><span>和白天一同唱歌，和黑夜一同做梦。</span></p><p><span>现在太阳又用一千只脚在我身上践踏，让我再在埃及的沙土上躺下。</span></p><p><span>但是，请看一个奇迹和一个谜吧！</span></p><p><span>那个把我集聚起来的太阳，不能把我打散。</span></p><p><span>我依旧挺立着，我以稳健的步履在尼罗河岸上行走。记忆是相会的一种形式。忘记是自由的一种形式。</span></p><p><span>我们依据无数太阳的运转来测定时间；他们以他们口袋里的小小的机器来测定时间。</span></p><p><span>请告诉我，我们怎能在同一的地点和同一的时间相会呢？</span></p><p><span>对于从银河的窗户里下望的人，空间就不是地球与太阳之间的空间了。人性是一条光河，从永久以前流到永久。难道在以太里居住的精灵，不妒羡世人的痛苦吗？</span></p><p><span>在到圣城去的路上，我遇到另一位香客，我问他：“这条就是到圣城去的路吗？”他说：“跟我来吧，再有一天一夜就到达圣城了。”我就跟随他。我们走了几天几夜，还没有走到圣城。使我惊讶的是，他带错了路反而对我大发脾气。</span></p><p><span>除了通过黑夜的道路，人们不能到达黎明。</span></p><p><span>我的房子对我说：“不要离开我，因为你的过去住在这里。”</span></p><p><span>道路对我说：“跟我来吧，因为我是你的将来。”</span></p><p><span>我对我的房子和道路说：“我没有过去，也没有将来。如果我住下来，我的住中就有去，如果我去，我的去中就有住。只有爱和死才能改变一切。”</span></p><p><span>当那些睡在绒毛上面的人所做的梦，并不比睡在土地上的人的梦更美好的时候，我怎能对生命的公平失掉信心呢？</span></p><p><span>奇怪得很，对某些娱乐的愿望，也是我痛苦的一部分。</span></p><p><span>曾有七次我鄙视了自己的灵魂。</span></p><p><span>第一次是在她可以上升而却谦让的时候。</span></p><p><span>第二次是我看见她在瘸者面前跛行的时候。</span></p><p><span>第三次是让她选择难易，而她选了易的时候。</span></p><p><span>第四次是她做错了事，却安慰自己说别人也同样做错了事。</span></p><p><span>第五次是她容忍了软弱，而把她的忍受称为坚强。</span></p><p><span>第六次是当她轻蔑一个丑恶的容颜的时候，却不知道那是她自己的面具中之一。</span></p><p><span>第七次是当她唱一首颂歌的时候，自己相信这是一种美德。我不知道什么是绝对的真理，但是，对于我的无知是谦虚的这其中就有了我的荣誉和报酬。在人的幻想和成就中间有一段空间，只能靠他的热望来通过。一个人的意义不在于他的成就，而在于他所企求成就的东西。我们中间，有些人像墨水，有些人像纸张。若不是因为有些人是黑的话，有些人就成了哑巴。若不是因为有些人是白的话，有些人就成了瞎子。给我一只耳朵，我将给你以声音。</span></p><p><span>我们的心才是一块海绵，我们的心怀着一道河水。</span></p><p><span>然而，我们大多宁愿吸引而不肯奔流，这不是很奇怪吗？</span></p><p><span>当你想望着无名的恩赐，怀抱着无端的烦恼的时候，你就真和一切生物一同长大，升向你的大我。</span></p><p><span>当一个人沉醉在一个幻象之中，他就会把这种幻象的模糊的情味，当作真实的酒。</span></p><p><span>你喝酒为的是求醉，我喝酒为的是要从别种的醉酒中清醒过来。</span></p><p><span>当我的酒杯空了的时候，我就让它空着；但当它半满的时候，我却恨它半满。</span></p><p><span>一个人的实质，不在于他向你显露的那一面，而在于他所不能向你显露的那一面。</span></p><p><span>因此，如果你想了解他，不要去听他说出的话，而要去听他的没有说出的话。</span></p><p><span>我说的话有一半是没有意义的；我把它说出来，为的是也许会让你听到其他的一半。幽默感就是分寸感。</span></p><p><span>当人们夸奖我多言的过失，责备我沉默的美德的时候，我的寂寞就产生了。</span></p><p><span>当生命找不到一个歌唱家来唱出她的心情的时候，她就产生一个哲学家来说出她的心思。真理是常久被人知道的，有时被人说出的。我们的真实的我是沉默的；后天的我是多嘴的。</span></p><p><span>我的生命内的声音达不到你的生命内的耳朵，但是为了避免寂寞就让我们交谈吧。</span></p><p><span>当两个女人交谈的时候，她们什么话也没有说；当一个女人自语的时候，她揭露了生命的一切。青蛙也许会叫得比牛更响，但是它们不能在田里拉犁，也不会在酒坊里牵磨，它们的皮也做不出鞋来。只有哑巴才妒忌多嘴的人。如果冬天说“春天在我的心里”，谁会相信冬天呢？每一粒种子都是一个愿望。</span></p><p><span>如果你真的睁起眼睛来看，你会从每一个形象中看到你自己的形象。</span></p><p><span>如果你张开耳朵来听，你会在一切声音里听到你自己的声音。</span></p><p><span>真理是需要我们两个人来发现的：一个人来讲说它，一个人来了解它。</span></p><p><span>虽然言语的波浪永远在我们上面喧哗，而我们的深处却永远是沉默的。</span></p><p><span>许多理论都像一扇窗户，我们通过它看到真理，但是它也会把我们同真理隔开。让我们玩捉迷藏吧。你如果藏在我的心里，就不难把你找到。但是如果你藏到你的壳里去，那么任何人也找你不到的。一个女人可以用微笑把她的脸蒙了起来。</span></p><p><span>那颗能够和欢乐的心一同唱出欢歌的忧愁的心，是多么高贵呵。</span></p><p><span>想了解女人，或分析天才，或想解答沉默的神秘的人，就是那个想从一个美梦中挣扎醒来坐到早餐桌上的人。我愿意同走路的人一同行走。我不愿站住看着队伍走过。</span></p><p><span>对于服侍你的人，你欠他的还不只是金子。把你的心交给他或是服侍他吧。没有，我们没有白活。他们不是把我们的骨头堆成堡垒了吗？</span></p><p><span>我们不要挑剔计较吧。诗人的心思和蝎子的尾巴，都是从同一块土地上光荣地升起的。每一条毒龙都产生出一个屠龙的圣乔治来。</span></p><p><span>树木是大地写上天空中的诗。我们把它们砍下造纸，让我们可以把我们的空洞记录下来。</span></p><p><span>如果你要写作（只有圣人才晓得你为什么要写作），你必须有知识、艺术和魔术——字句的音乐的知识，不矫揉造作的艺术，和热爱你读者的魔术。他们把笔蘸在我们的心怀里，就认为他们已经得了灵感了。如果一棵树也写自传的话，它不会不像一个民族的历史。</span></p><p><span>如果我在“写诗的能力”和“未写成诗的欢乐”之间选择的话，我就要选那欢乐。因为欢乐是更好的诗。</span></p><p><span>但是，你和我所有的邻居，都一致地说我总是不会选择。</span></p><p><span>诗不是一种表白出来的意见。它是从一个伤口或是一个笑口涌出的一首歌曲。</span></p><p><span>言语是没有时间性的。在你说它或是写它的时候应该懂得它的特点。</span></p><p><span>诗人是一个退位的君王，坐在他的宫殿的灰烬里，想用残灰捏出一个形象。诗是欢乐、痛苦和惊奇穿插着词汇的一场交道。一个诗人要想寻找他心里诗歌的母亲的话，是徒劳无功的。</span></p><p><span>我曾对一个诗人说：“不到你死后我们不会知道你的评价。”</span></p><p><span>他回答说：“是的，死亡永远是个揭露者。如果你真想知道我的评价，那就是我心里的比舌上的多，我所愿望的比手里现有的多。”如果你歌颂美，即使你是在沙漠的中心，你也会有听众。诗是迷醉心怀的智慧。智慧是心思里歌唱的诗。灵感总是歌唱；灵感从不解释。我们常为使自己入睡，而对我们的孩子唱催眠的歌曲。我们的一切字句，都是从心思的筵席上散落下来的残屑。思想对于诗往往是一块绊脚石。能唱出我们的沉默的，是一个伟大的歌唱家。如果你嘴里含满了食物，你怎能歌唱呢？如果手里握满金钱，你怎能举起祝福之手呢？他们说夜莺唱着恋歌的时候，把刺扎进自己的胸膛。我们也都是这样的。不这样我们还能歌唱吗？天才只不过是晚春开始时节知更鸟所唱的一首歌。连那最高超的心灵，也逃不出物质的需要。</span></p><p><span>疯人作为一个音乐家并不比你我逊色；不过他所弹奏的乐器有点失调而已。在母亲心里沉默着的诗歌，在她孩子的唇上唱了出来。没有不能圆满的愿望。</span></p><p><span>我和另外一个我从来没有完全一致过。事物的实质似乎横亘在我们中间。</span></p><p><span>你的另外一个你总是为你难过。但是，你的另外一个你就在难过中成长；那么就一切都好了。</span></p><p><span>除了在那些灵魂熟睡、躯壳失调的人的心里之外，灵魂和躯壳之间是没有斗争的。</span></p><p><span>当你达到生命的中心的时候，你将在万物中甚至于在看不见美的人的眼睛里，也会找到美。</span></p><p><span>我们活着只为的是去发现美。其他一切都是等待的种种形式。</span></p><p><span>撒下一粒种子，大地会给你一朵花。向天祝愿一个梦想，天空会给你一个情人。你生下来的那一天，魔鬼就死去了。你不必经过地狱去会见天使。许多女子借到了男子的心；很少女子能占有它。如果你想占有，你千万不可要求。当一个男子的手接触到一个女子的手，他俩都接触到了永在的心。爱情是情人之间的面幕。</span></p><p><span>每一个男子都爱着两个女人：一个是他想像的作品，另一个还没有生下来。</span></p><p><span>不肯原谅女人的细微过失的男子，永远不会欣赏她们伟大的德性。不日日自新的爱情，变成一种习惯，而终于变成奴役。情人只拥抱了他们之间的一种东西，而没有互相拥抱。恋爱和疑忌是永不交谈的。</span></p><p><span>爱情是一个光明的字，被一只光明的手写在一张光明的册页上的。友谊永远是一个甜柔的责任，从来不是一种机会。</span></p><p><span>如果你不在所有的情况下了解你的朋友，你就永远不会了解他。你的最华丽的衣袍是别人织造的；你的最可口的一餐是在别人的桌上吃的；你的最舒适的床铺是在别人的房子里的。那么请告诉我，你能把自己同别人分开吗？</span></p><p><span>你的心思和我的心怀将永不会一致，除非你的心思不再居留于数字中，而我的心怀不再居留在云雾里。除非我们把语言减少到七个字，我们将永不会互相了解。我的心，除了把它敲碎以外，怎能把它打开呢？</span></p><p><span>只有深哀和极乐才能显露你的真实。</span></p><p><span>如果你愿意被显露出来，你必须在阳光中裸舞，或是背起你的十字架。</span></p><p><span>如果自然听到了我们所说的知足的话语，江河就不去寻找大海，冬天就不会变成春天。如果她听到我们所说的一切吝啬的话语，我们有多少人可以呼吸到空气呢？当你背向太阳的时候，你只看到自己的影子。</span></p><p><span>你在白天的太阳前面是自由的，在黑夜的星辰前面也是自由的；</span></p><p><span>在没有太阳、没有月亮、没有星辰的时候，你也是自由的。</span></p><p><span>就是在你对世上一切闭起眼睛的时候，你也是自由的。</span></p><p><span>你是你所爱的人的奴隶，因为你爱了他。</span></p><p><span>你也是爱你的人的奴隶，因为他爱了你。</span></p><p><span>我们都是庙门前的乞丐，当国王进出庙门的时候，我们每人都分受到恩赏。但是，我们都互相妒忌，这是轻视国王的另一种方式。</span></p><p><span>你不能吃得多过你的食欲。那一半食粮是属于别人的，而且也还要为不速之客留下一点面包。如果不为待客的话，所有的房屋都成了坟墓。</span></p><p><span>和善的狼对天真的羊说：“你不光临寒舍吗？”</span></p><p><span>羊回答说：“我们将以造府为荣，如果你的贵府不是在你肚子里的话。”</span></p><p><span>我把客人拦在门口说：“不必了，在出门的时候再擦脚吧，进门的时候是不必擦的。”</span></p><p><span>慷慨不是你把我比你更需要的东西给我，而是你把你比我更需要的东西，也给了我。</span></p><p><span>当你施予的时候你当然是慈善的，在授予的时候要把脸转过一边，这样就可以不看那受者的羞赧o</span></p><p><span>最富与最穷的人的差别，只在于一整天的饥饿和一个钟头的干渴。我们常常从我们的明天预支了来偿付我们昨天的债负。</span></p><p><span>我也曾受过天使和魔鬼的造访，但是，我都把他们支走了。</span></p><p><span>当天使来的时候，我念一段旧的祷文，他就厌烦了；</span></p><p><span>当魔鬼来的时候，我犯一次旧的罪过，他就从我面前走过了。</span></p><p><span>总的说来，这不是一所坏监狱；我只不喜欢在我的囚房和隔壁囚房之间的这堵墙；</span></p><p><span>然而，我对你保证，我决不愿责备狱吏和建造这监狱的人。</span></p><p><span>你向他们求鱼而却给你毒蛇的那些人，也许他们只有毒蛇可给。那么在他们一方面就算是慷慨的了。欺骗有时成功，但它往往自杀。</span></p><p><span>当你饶恕那些从不流血的凶手，从不窃盗的小偷，不打诳语的说谎者的时候，你就真是一个宽大的人。</span></p><p><span>谁能把手指放在善恶分野的地方，谁就是能够摸到上帝圣袍的边缘的人。</span></p><p><span>如果你的心是一座火山的话，你怎能指望会从你的手里开出花朵来呢？</span></p><p><span>多么奇怪的一个自欺的方式！有时我宁愿受到损害和欺骗好让我嘲笑那些以为我不知道我是被损害、欺骗了的人。对于一个扮作被追求者的角色的追求者，我该怎么说他呢？</span></p><p><span>让那个把脏手擦在你衣服上的人，把你的衣服拿起走吧。他也许还需要那件衣服，你却一定不会再要了。兑换商不能做一个好园丁，真是可惜。</span></p><p><span>请你不要以后天的德行来粉饰你的先天的缺陷。我宁愿有缺陷；这些缺陷和我自己的一样。</span></p><p><span>有多少次我把没有犯过的罪都拉到自己身上，为的让人家在我面前感到舒服。就是生命的面具也都是更深的奥秘的面具。你可能只根据自己的了解去判断别人。现在告诉我，我们里头谁是有罪的，谁是无辜的。真正公平的人就是对你的罪过感到应该分担的人。只有白痴和天才，才会去破坏人造的法律。只在你被追逐的时候，你才快跑。我没有仇人，如果我会有仇人的话；就让他和我势均力敌，只让真理做一个战胜者。当你和敌人都死了的时候，你就会和他十分友好了。一个人在自卫的时候可能自杀。</span></p><p><span>很久以前一个“人”因为过于爱别人，也太可爱了，因而被钉在十字架上。</span></p><p><span>说来奇怪，昨天我碰到他三次。</span></p><p><span>第一次是他恳求一个警察不要把一个妓女关到监牢里去；第二次是他和一个无赖一块喝酒；第三次是他在教堂里和一个法官拳斗。</span></p><p><span>怜悯只是半个公平。</span></p><p><span>过去唯一对我不公平的人，就是那个我曾对他的兄弟不公平的人。</span></p><p><span>当你看见一个人被带进监狱的时候，在你心中默默地说：“也许他是从更狭小的监狱里逃出来的。”</span></p><p><span>当你看见一个人喝醉了的时候，在你心中默默地说：“也许他想躲避某些更不美好的事物。”</span></p><p><span>在自卫中我常常憎恨；但是如果我是一个比较坚强的人，我就不必使用这样的武器。用唇上的微笑来遮掩眼里的憎恨的人是多么愚蠢呵！只有在我以下的人，能嫉妒我或憎恨我。我从来没有被妒忌或被憎恨过，我不在任何人之上。只有在我以上的人，能称赞我或轻蔑我。我从来没有被称赞或被轻蔑过，我不在任何人之下。</span></p><p><span>你对我说：“我不了解你。”这就是过分地赞扬了我，无故地侮辱了你。</span></p><p><span>当生命给我金子而我给你银子的时候，我还自以为慷慨，这是多么卑鄙呵！</span></p><p><span>当你达到生命心中的时候，你会发现你不高于罪人，也不低于先知。</span></p><p><span>奇怪的是，你竟可怜那脚下慢的人，而不可怜那心里慢的人。</span></p><p><span>可怜那盲于目的人，而不可怜那盲于心的人。瘸子不在他敌人的头上敲断他的拐杖，是更聪明些的。</span></p><p><span>那个认为从他的口袋里给你，可以从你心里取回的人，是多么糊涂呵！生命是一支队伍，迟慢的人发现队伍走得太快了，他就走出队伍快步的人又发现队伍走得太慢了，他也走出队伍。真正的好人，是那个和所有的大家认为坏的人在一起的人。</span></p><p><span>如果我们都公开了我们的美德的话，我们也将为大家并无新创而大笑。一个人是在人造的法律之上，直到他犯了抵触人造的惯例的罪；在此以后，他就不在任何人之上，也不在任何人之下。政府是你和我之间的协定。你和我常常是错误的。罪恶是需要的别名，或是疾病的一种。还有比意识到别人的过失还大的过失吗？</span></p><p><span>如果别人嘲笑你，你可以怜悯他；但是如果你嘲笑他，你决不可自恕。</span></p><p><span>如果别人伤害你，你可以忘掉它；但是如果你伤害了他，你须永远记住。</span></p><p><span>实际上别人就是最敏感的你，附托在另一个躯壳上。</span></p><p><span>你要人们用你的翅翼飞翔，而却连一根羽毛也拿不出的时候，你是多么轻率呵。从前有人坐在我的桌上，吃我的饭，喝我的酒，走时还嘲笑我。以后他再来要吃要喝，我就不理他；天使就嘲笑我。憎恨是一件死东西，你们有谁愿意做一座坟墓？被杀者的光荣就是他不是凶手。人道的保护者是在它沉默的心怀中，从不在它多言的心思里。他们认为我疯了，因为我不肯拿我的光阴去换金钱；我认为他们是疯了，因为他们以为我的光阴是可以估价的。</span></p><p><span>他们把最昂贵的金子、银子、象牙和黑檀排列在我们的面前，我们把心胸和气魄排列在他们的面前；</span></p><p><span>而他们却自称为主人，把我们当作客人。</span></p><p><span>我宁可做人类中有梦想和有完成梦想的愿望的、最渺小的人，而不愿做一个最伟大的、无梦想、无愿望的人。最可怜的人是把他的梦想变成金银的人。</span></p><p><span>我们都在攀登自己心愿的高峰。如果另一个登山者偷了你的粮袋和钱包，而把粮袋装满了，钱包也加重了，你应当可怜他；</span></p><p><span>这攀登将为他的肉体增加困难，这负担将加长他的路程。</span></p><p><span>如果在你消瘦的情况下，看到他的肉体膨胀着往上爬，帮他一步，这样做会增加你的速度。</span></p><p><span>你不能超过你的了解去判断一个人，而你的了解是多么浅薄呵。我绝不去听一个征服者对被征服的人的说教。真正自由的人是忍耐地背起奴隶的负担的人。千年以前，我的邻人对我说：“我恨生命，因为它只是一件痛苦的东西。”</span></p><p><span>昨天我走过一座坟园，我看见生命在他的坟上跳舞。</span></p><p><span>静独是吹落我们枯枝的一阵无声的风暴；</span></p><p><span>但是，它把我们活生生的根芽，更深地送进活生生的大地的活生生的心里。</span></p><p><span>我曾对一条小溪谈到大海，小溪认为我只是一个幻想的夸张者；</span></p><p><span>我也曾对大海谈到小溪，大海认为我只是一个低估的毁谤者。</span></p><p><span>把蚂蚁的忙碌捧得高于蚱蜢的歌唱的眼光，是多么狭窄啊！</span></p><p><span>这个世界里的最高德行，在另一个世界也许是最低的。</span></p><p><span>深和高在直线上走到深度和高度；只有广阔能在圆周里运行。</span></p><p><span>如果不是因为我们有了重量和长度的观念，我们站在萤火光前也会同在太阳面前一样的敬畏。</span></p><p><span>一个没有想像力的科学家，好像一个拿着钝刀和旧秤的屠夫。</span></p><p><span>但既然我们不全是素食者，那么你该怎么办呢？</span></p><p><span>当你歌唱的时候，饥饿的人就用他的肚子来听。死亡和老人的距离并不比和婴儿的距离更近；生命也是如此。假如你必须直率地说话，就直率得漂亮一些，要不就沉默下来，因为我们邻近有一个人快死了。</span></p><p><span>实际上，我们只对自己说话，不过有时我们说得大声一点，使得别人也能听见。</span></p><p><span>显而易见的东西是：在被人简单地表现出来之前，是从不被人看到的。也许大海给贝壳下的定义是珍珠。也许时间给煤炭下的定义是钻石。荣名是热情站在阳光中的影子。花根是鄙弃荣名的花朵。在美之外没有宗教，也没有科学。</span></p><p><span>我所认得的大人物的性格中都有些渺小的东西，就是这些渺小的东西，阻止了懒惰、疯狂或者自杀。真正伟大的人是不压制人也不受人压制的人。我决不因为那个人杀了罪人和先知，就相信他是中庸的。容忍是和高傲狂害着相思的一种病症。虫子是会弯曲的，但是连大象也会屈服，不是很奇怪吗？一场争论可能是两个心思之间的捷径。我是烈火，我也是枯枝，一部分的我消耗了另一部分的我。</span></p><p><span>我们都在寻找圣山的顶峰；假如我们把过去当作一张图表而不作为一个向导的话，我们的路程不是可以缩短吗？</span></p><p><span>当智慧骄傲到不肯哭泣，庄严到不肯欢笑，自满到不肯看人的时候，就不成为智慧了。</span></p><p><span>如果我把你所知道的一切，把自己填满的话，我还能有余地来容纳你所不知道的一切吗？</span></p><p><span>我从多话的人学到了静默，从褊狭的人学到了宽容，从残忍的人学到了仁爱，但奇怪的是我对于这些教师并不感激。执拗的人是一个极聋的演说家。妒忌的沉默是太吵闹了。</span></p><p><span>当你达到你应该了解的终点的时候，你就处在你应该感觉的起点。夸张是发了脾气的真理。</span></p><p><span>假如你只能看到光所显示的，只能听到声音所宣告的，那么实际上你没有看也没有听。一件事实是一条没有性别的真理。你不能同时又笑又冷酷。离我心最近的，是一个没有国土的国王和一个不会求乞的穷人。一个羞赧的失败比一个骄傲的成功还要高贵。</span></p><p><span>在任何一块土地上挖掘，你都会找珍宝，不过你必须以农民的信心去挖掘。</span></p><p><span>一只被二十个骑士和二十条猎狗追逐着的狐狸说：“他们当然会打死我，但他们准是很可怜、很笨拙的；假如二十只狐狸骑着二十头驴子带着二十只狼去追打一个人的话，那真是不值得。”</span></p><p><span>是我们的心思屈服于我们自制的法律之下，我们的精神是从不屈服的。</span></p><p><span>我是一个旅行者，也是一个航海者，我每天在我的灵魂中发现一个新的王国。</span></p><p><span>一个女人抗议说：“当然那是一场正义战争，我的儿子在这场战争中牺牲了。”</span></p><p><span>生与死是勇敢的两种最高贵的表现。我的朋友，你和我对于生命将永远是个陌生者，我们彼此也是陌生者，对自己也是陌生者，直到你要说我要听的那一天，把你的声音作为我的声音；当我站在你的面前，觉得我是站在镜前的时候。他们对我说：“你能自知你就能了解所有的人。”我说：“只有我寻求所有的人我才能自知。”一个人有两个我，一个在黑暗里醒着，一个在光明中睡着。</span></p><p><span>隐士是遗弃了一部分的世界，使他可以无惊无扰地享受着整个世界。</span></p><p><span>在学者和诗人之间伸展着一片绿野，如果学者穿走过来，他就成个圣贤，如果诗人穿走过来，他就成个先知。</span></p><p><span>昨天，我看见哲学家们把他们的头颅装在篮子里，在市场上高声叫卖：“智慧，卖智慧咯！”</span></p><p><span>可怜的哲学家！他们必须出卖他们的头来喂养他们的心。一个哲学家对一个清道夫说：“我可怜你，你的工作又苦又脏。”清道夫说：“谢谢你，先生。请告诉我，你做什么工作？”哲学家回答说：“我研究人的心思、行为和愿望。”清道夫一面扫街一面微笑说：“我也可怜你。”听真理的人并不弱于讲真理的人。</span></p><p><span>没有人能在需要与奢侈之间划一条界线。只有天使能这样做，天使是明智而热切的。也许天使就是我们在太空中的更高尚的思想。在托钵僧的心中找到自己的宝座的是真正的王子。慷慨是超过自己能力的施予，自尊是少于自己需要的接受。实际上你不欠任何人的债。你欠所有的人一切的债。</span></p><p><span>从前生活过的人现在都和我们一起活着，我们中间当然没有人愿意做一个慢客的主人。想望得最多的人活得最长。</span></p><p><span>他们对我说：“十鸟在树不如一鸟在手。”</span></p><p><span>我却说：“一鸟一羽在树胜过十鸟在手。”</span></p><p><span>你对那根羽毛的追求，就是脚下生翼的生命，不，它就是生命的本身。</span></p><p><span>世上只有两个元素，美和真；美在情人的心中，真在耕者的臂里。</span></p><p><span>伟大的美俘虏了我，但是一个更伟大的美居然把我从掌握中释放了。</span></p><p><span>美在想望它的人的心里，比在看到它的人的眼里，放出更明亮的光彩。我爱慕那对我倾诉心怀的人，我尊重那对我披露梦想的人。但是为什么在服侍我的人面前，我却腼腆，甚至于带些羞愧呢？天才曾以能侍奉王子为荣。现在他们以侍奉贫民为荣。</span></p><p><span>天使们晓得，有过多的讲实际的人，就着梦想者眉间的汗，吃他们的面包。</span></p><p><span>风趣往往是一副面具。你如能把它扯了下来，你将发现一个被激恼了的才智，或是在变着戏法的聪明。</span></p><p><span>聪明把聪明归功于我，愚钝把愚钝归罪于我。我想他俩都是对的。只有自己心里有秘密的人才能参透我们心里的秘密。忧愁是两座花园之间的一堵墙壁。当你的欢乐和悲哀变大的时候，世界就变小了。愿望是半个生命，淡漠是半个死亡。我们今天的悲哀里最苦的东西，是我们昨天的欢乐的回忆。他们对我说：“你必须在今生的欢娱和来世的平安之中做个选择。”</span></p><p><span>我对他们说：“我已选择了今生愉快和来世的安宁。因为我心里知道那最大的诗人只写过一首诗，而这首诗是完全合乎音节韵律的。”信仰是心中的绿洲，思想的骆驼队是永远走不到的。</span></p><p><span>当你求达你的高度的时候，你将想望，但要只为想望而想望；你应为饥饿而热望，你应为更大的干渴而渴望。</span></p><p><span>假如你对风泄露了你的秘密，你就不应当去责备风对树林泄露了秘密。春天的花朵是天使们在早餐桌上所谈论的冬天的梦想。鼬鼠对月下香说：“看我跑得多快，你却不能走，也不会爬。”月下香对鼬鼠说：“嗐，最高贵的快腿，请你快快跑开吧！”乌龟比兔子更能多讲些道路的情况。奇怪的是没有脊骨的生物都有最坚硬的壳。</span></p><p><span>话最多的人是最不聪明的人，在一个演说家和一个拍卖人之间，几乎没有分别。</span></p><p><span>你应该感谢，因为你不必靠着父亲的名望或伯叔的财产来生活。</span></p><p><span>但是最应感谢的是，没有人必须靠着你的名誉或财产来生活。只在一个变戏法的人接不到球的时候，他才能吸引我。嫉妒我的人在不知不觉之中颂扬了我。</span></p><p><span>在很久的时间，你是你母亲睡眠里的一个梦，以后她醒起把你生了下来。人类的胚芽是在你母亲的愿望里。我的父母愿意有个孩子，他们就生了我。我要母亲和父亲，我就生下了黑夜和海洋。</span></p><p><span>有的儿女使我们感到此生不虚，有的儿女为我们留下终天之憾。</span></p><p><span>当黑夜来了而你也阴郁的时候，就坚决地阴郁着躺了下去。</span></p><p><span>当早晨来了而你还感着阴郁的时候，就站起来坚决地对白天说：“我还是阴郁的。”</span></p><p><span>对黑夜和白天扮演角色是愚蠢的。</span></p><p><span>他俩都会嘲笑你。雾里的山岳不是丘陵，雨中的橡树也不是垂柳。</span></p><p><span>看哪，这一个似非而是的论断，深和高是比“折中”和“两可”更为相近。</span></p><p><span>当我像一面明镜似的站在你面前的时候，你注视着我看到了自己的形象。</span></p><p><span>然后你说：“我爱你。”</span></p><p><span>但是实际上你爱的是我里面的你。当你以爱怜为乐的时候，它就不是美德了。不时常涌溢的爱就往往死掉。你不能同时又有青春又有关于青春的知识。</span></p><p><span>因为青春忙于生活，而顾不得去了解；而知识为着要生活，而忙于自我寻求。</span></p><p><span>你有时坐在窗边看望过往行人。望着望着，你也许看见一个尼姑向你右手边走来，一个妓女向你左手边走来。</span></p><p><span>你也许在无心中说出：“这一个是多么高洁而那一个又是多么卑贱。”</span></p><p><span>假如你闭起眼睛静听一会，你会听到太空中有个声音低声说：“这一个在祈祷中寻求我，那一个在痛苦中寻求我。在各人的心灵里，都有一座供奉我的心灵的庵堂。”一个伟大的人有两颗心：一颗心流血，另一颗心宽容。</span></p><p><span>如果一个人说了并不伤害你或任何人的谎话，为什么不在你心里说，他堆放事实的房子是太小了，搁不下他的胡想，他必须把胡想留待更大的地场。在每扇关起的门后，都有一个用七道封皮封起的秘密。等待是时间的脚。假如困难是你东墙上的一扇新开的窗户，那你怎么办呢？</span></p><p><span>和你一同笑过的人，你可能把他忘掉；但是和你一同哭过的人，你却永志不忘。在盐里面一定有些出奇地神圣的东西。它也在我们的眼泪里和大海里。</span></p><p><span>你不过是我的一个碎片，一张寻求面包的嘴，一只盲目的、为一张干渴的嘴举着水杯的手。</span></p><p><span>只要你从种族、国家和自身之上，升起一腕尺，你就真成了神一样的人。</span></p><p><span>假如我是你，我决不在低潮的时候去抱怨大海。</span></p><p><span>船是一只好船，我们的船主是精干的；只不过是你的肚子不合适就是了。</span></p><p><span>我们想望而得不到的东西，比我们已经得到的东西总要宝贵些。</span></p><p><span>假如你能坐在云头上，你就看不见两国之间的界线，也看不见庄园之间的界石。</span></p><p><span>可惜的是你不能坐在云头上。</span></p><p><span>七百年以前有七只白鸽，从幽谷里飞上高山的雪峰。七个看到鸽子飞翔的人中，有一个说：“我看出第七只鸽子的翅膀上，有一个黑点。”</span></p><p><span>今天这山谷里的人们，就说飞上雪山顶峰的是七只黑鸽。</span></p><p><span>在秋天，我收集起我的一切烦恼，把它们埋在我的花园里。</span></p><p><span>四月又到，春天来同大地结婚，在我的花园里开出与众花不同的美丽的花。</span></p><p><span>我的邻人们都来赏花，他们对我说：“当秋天再来，该下种子的时候，你好不好把这些花种分给我们，让我们的花园里也有这些花呢？”</span></p><p><span>假如我向人伸出空手而得不到东西，那当然是苦恼，但是假如我伸出一只满握的手，而发现没有人来接受，那才是绝望呢。</span></p><p><span>我渴望着来生，因为在那里我将会得到我的未写出的诗和未画出的画。</span></p><p><span>艺术是从自然走向无穷的一步。艺术作品是一堆云雾雕塑成的一个形象。连那把荆棘编成王冠的双手，也比闲着的双手强。我们最神圣的眼泪，永不寻求我们的眼睛。每一个都是已往的每一个君王和每一个奴隶的后裔。</span></p><p><span>你也许听说过那座福山。</span></p><p><span>它是我们世上最高的山。</span></p><p><span>一旦你登上顶峰，你就只有一个愿望，那就是往下走入最深的峪谷里，和那里的人民一同生活。</span></p><p><span>这就是这座山叫做福山的原因。我的每一个禁闭在表情里的念头，我必须用行为去释放它。</span></p><hr /><p>&nbsp;</p></div>
+</body>
+</html>
