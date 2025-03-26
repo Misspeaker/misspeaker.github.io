@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Splash Canvas - 儿童画板</title>
+    <style>
+        :root {
+            --primary: #FF9E7D;
+            --secondary: #FFD166;
+            --accent: #06D6A0;
+            --light: #118AB2;
+            --bright: #EF476F;
+            --white: #F8F9FA;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Marker Felt', '微软雅黑', sans-serif;
+            background-color: #FFF5F1;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: var(--bright);
+            margin: 0 0 15px 0;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .canvas-container {
+            position: relative;
+            margin: 0 auto;
+            border: 3px dashed var(--secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            background-color: white;
+            touch-action: none;
+        }
+        
+        #drawing-canvas {
+            display: block;
+            background-color: white;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="black" stroke-width="1"/></svg>') 8 8, crosshair;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .color-picker {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .color-option.selected {
+            transform: scale(1.3);
+            border: 2px solid black;
+            box-shadow: 0 0 0 2px white;
+        }
+        
+        .brush-size {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .brush-size label {
+            font-weight: bold;
+            color: var(--light);
+        }
+        
+        .brush-size input {
+            width: 100px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .save-btn {
+            background-color: var(--accent);
+        }
+        
+        .clear-btn {
+            background-color: var(--bright);
+        }
+        
+        .download-link {
+            display: none;
+        }
+        
+        .decoration {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .decoration-1 { top: 10px; left: 20px; }
+        .decoration-2 { bottom: 10px; right: 20px; }
+        .decoration-3 { top: 50%; left: 10px; }
+        .decoration-4 { top: 30%; right: 15px; }
+        
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="decoration decoration-1">🎨</div>
+        <div class="decoration decoration-2">✏️</div>
+        <div class="decoration decoration-3">🖌️</div>
+        <div class="decoration decoration-4">🖍️</div>
+        
+        <h1>Color Splash Canvas 🎨</h1>
+        
+        <div class="canvas-container">
+            <canvas id="drawing-canvas" width="700" height="500"></canvas>
+        </div>
+        
+        <div class="controls">
+            <div class="color-picker">
+                <div class="color-option selected" style="background-color: #EF476F;" data-color="#EF476F"></div>
+                <div class="color-option" style="background-color: #FFD166;" data-color="#FFD166"></div>
+                <div class="color-option" style="background-color: #06D6A0;" data-color="#06D6A0"></div>
+                <div class="color-option" style="background-color: #118AB2;" data-color="#118AB2"></div>
+                <div class="color-option" style="background-color: #073B4C;" data-color="#073B4C"></div>
+                <div class="color-option" style="background-color: #FF9E7D;" data-color="#FF9E7D"></div>
+                <div class="color-option" style="background-color: #8338EC;" data-color="#8338EC"></div>
+                <div class="color-option" style="background-color: #FF006E;" data-color="#FF006E"></div>
+                <div class="color-option" style="background-color: #3A86FF;" data-color="#3A86FF"></div>
+                <div class="color-option" style="background-color: #000000;" data-color="#000000"></div>
+            </div>
+            
+            <div class="brush-size">
+                <label for="brush-size">画笔大小:</label>
+                <input type="range" id="brush-size" min="1" max="50" value="10">
+                <span id="brush-size-value">10</span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="save-btn" id="save-btn">
+                <span>保存图片</span> 💾
+            </button>
+            <button class="clear-btn" id="clear-btn">
+                <span>清空画布</span> 🧹
+            </button>
+        </div>
+        
+        <a id="download-link" class="download-link"></a>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        const colorOptions = document.querySelectorAll('.color-option');
+        const brushSizeInput = document.getElementById('brush-size');
+        const brushSizeValue = document.getElementById('brush-size-value');
+        const saveBtn = document.getElementById('save-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const downloadLink = document.getElementById('download-link');
+        
+        // 调整画布大小以适应容器
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // 初始化画布
+        function initCanvas() {
+            resizeCanvas();
+            
+            // 设置初始绘图样式
+            ctx.strokeStyle = '#EF476F';
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // 白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // 绘画状态
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        
+        // 开始绘画
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = getPosition(e);
+        }
+        
+        // 绘画中
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const [x, y] = getPosition(e);
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            
+            [lastX, lastY] = [x, y];
+        }
+        
+        // 结束绘画
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        // 获取鼠标/触摸位置
+        function getPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            let x, y;
+            
+            if (e.type.includes('touch')) {
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+            
+            return [x, y];
+        }
+        
+        // 改变颜色
+        function changeColor(e) {
+            // 移除所有选中状态
+            colorOptions.forEach(option => option.classList.remove('selected'));
+            
+            // 添加选中状态到当前选项
+            const selectedColor = e.target.dataset.color;
+            e.target.classList.add('selected');
+            
+            // 更新画笔颜色
+            ctx.strokeStyle = selectedColor;
+        }
+        
+        // 改变画笔大小
+        function changeBrushSize() {
+            const size = brushSizeInput.value;
+            brushSizeValue.textContent = size;
+            ctx.lineWidth = size;
+        }
+        
+        // 保存图片
+        function saveImage() {
+            const dataURL = canvas.toDataURL('image/png');
+            downloadLink.href = dataURL;
+            downloadLink.download = '我的绘画-' + new Date().toISOString().slice(0, 10) + '.png';
+            downloadLink.click();
+        }
+        
+        // 清空画布
+        function clearCanvas() {
+            if (confirm('确定要清空画布吗？')) {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+        
+        // 事件监听
+        window.addEventListener('resize', resizeCanvas);
+        
+        // 鼠标事件
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        // 触摸事件
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startDrawing(e);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            draw(e);
+        });
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        // 控制事件
+        colorOptions.forEach(option => option.addEventListener('click', changeColor));
+        brushSizeInput.addEventListener('input', changeBrushSize);
+        saveBtn.addEventListener('click', saveImage);
+        clearBtn.addEventListener('click', clearCanvas);
+        
+        // 初始化应用
+        initCanvas();
+    </script>
+</body>
+</html>
