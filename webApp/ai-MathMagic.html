@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学小乐园 - 加减法练习</title>
+    <style>
+        :root {
+            --primary-color: #FF9AA2;
+            --secondary-color: #FFB7B2;
+            --accent-color: #FFDAC1;
+            --light-color: #E2F0CB;
+            --bright-color: #B5EAD7;
+            --text-color: #5E5E5E;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', 'Marker Felt', '微软雅黑', sans-serif;
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 10% 20%, var(--light-color) 0%, var(--bright-color) 90%);
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .math-problem {
+            font-size: 3rem;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: var(--accent-color);
+            border-radius: 15px;
+            display: inline-block;
+            min-width: 250px;
+        }
+        
+        .answer-input {
+            font-size: 2rem;
+            width: 100px;
+            text-align: center;
+            padding: 10px;
+            border: 3px solid var(--secondary-color);
+            border-radius: 10px;
+            margin: 0 10px;
+            font-family: inherit;
+            color: var(--text-color);
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: #ff7e8a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .feedback {
+            font-size: 1.5rem;
+            height: 2rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .correct {
+            color: #4CAF50;
+        }
+        
+        .incorrect {
+            color: #F44336;
+        }
+        
+        .score-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .score-box {
+            background-color: var(--bright-color);
+            padding: 10px 20px;
+            border-radius: 10px;
+            min-width: 100px;
+        }
+        
+        .decoration {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .decoration-1 {
+            top: 10px;
+            left: 20px;
+        }
+        
+        .decoration-2 {
+            bottom: 10px;
+            right: 20px;
+        }
+        
+        .operation-selector {
+            margin: 20px 0;
+        }
+        
+        .operation-btn {
+            background-color: var(--bright-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            margin: 0 5px;
+        }
+        
+        .operation-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        @media (max-width: 500px) {
+            .math-problem {
+                font-size: 2rem;
+                min-width: 200px;
+            }
+            
+            .answer-input {
+                font-size: 1.5rem;
+                width: 80px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="decoration decoration-1">✏️</div>
+        <div class="decoration decoration-2">📚</div>
+        
+        <h1>数学小乐园 🎠</h1>
+        
+        <div class="operation-selector">
+            <button class="operation-btn active" id="add-btn">加法 ➕</button>
+            <button class="operation-btn" id="subtract-btn">减法 ➖</button>
+            <button class="operation-btn" id="mixed-btn">混合 ✨</button>
+        </div>
+        
+        <div class="math-problem" id="problem">5 + 3</div>
+        
+        <div>
+            <span>=</span>
+            <input type="number" class="answer-input" id="answer" autofocus>
+            <button id="check-btn">检查 ✅</button>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="score-container">
+            <div class="score-box">得分: <span id="score">0</span></div>
+            <div class="score-box">连续正确: <span id="streak">0</span></div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const problemElement = document.getElementById('problem');
+        const answerElement = document.getElementById('answer');
+        const checkBtn = document.getElementById('check-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const scoreElement = document.getElementById('score');
+        const streakElement = document.getElementById('streak');
+        const addBtn = document.getElementById('add-btn');
+        const subtractBtn = document.getElementById('subtract-btn');
+        const mixedBtn = document.getElementById('mixed-btn');
+        
+        // 游戏状态
+        let score = 0;
+        let streak = 0;
+        let currentOperation = 'add'; // 'add', 'subtract', 'mixed'
+        
+        // 生成随机数
+        function getRandomNumber(max) {
+            return Math.floor(Math.random() * max) + 1;
+        }
+        
+        // 生成新的数学题
+        function generateProblem() {
+            let num1, num2, operator, answer;
+            
+            if (currentOperation === 'mixed') {
+                // 随机选择加法或减法
+                currentOperation = Math.random() > 0.5 ? 'add' : 'subtract';
+            }
+            
+            if (currentOperation === 'add') {
+                num1 = getRandomNumber(20);
+                num2 = getRandomNumber(20);
+                operator = '+';
+                answer = num1 + num2;
+            } else {
+                // 减法确保结果为正数
+                num1 = getRandomNumber(20);
+                num2 = getRandomNumber(num1);
+                operator = '-';
+                answer = num1 - num2;
+            }
+            
+            problemElement.textContent = `${num1} ${operator} ${num2}`;
+            answerElement.value = '';
+            answerElement.focus();
+            
+            return answer;
+        }
+        
+        // 检查答案
+        function checkAnswer() {
+            const userAnswer = parseInt(answerElement.value);
+            const correctAnswer = parseInt(problemElement.dataset.answer);
+            
+            if (isNaN(userAnswer)) {
+                feedbackElement.textContent = '请输入一个数字哦!';
+                feedbackElement.className = 'feedback incorrect';
+                return;
+            }
+            
+            if (userAnswer === correctAnswer) {
+                feedbackElement.textContent = '太棒了! 👍';
+                feedbackElement.className = 'feedback correct';
+                score += 1;
+                streak += 1;
+                scoreElement.textContent = score;
+                streakElement.textContent = streak;
+                
+                // 根据连续正确数改变背景颜色作为奖励
+                if (streak >= 3) {
+                    document.body.style.backgroundColor = '#f0fff0';
+                }
+                if (streak >= 5) {
+                    document.body.style.backgroundColor = '#f0f8ff';
+                }
+            } else {
+                feedbackElement.textContent = `再试一次! 正确答案是 ${correctAnswer}`;
+                feedbackElement.className = 'feedback incorrect';
+                streak = 0;
+                streakElement.textContent = streak;
+                document.body.style.backgroundColor = '#fff0f0';
+            }
+            
+            // 生成新题目
+            problemElement.dataset.answer = generateProblem();
+        }
+        
+        // 设置操作类型
+        function setOperation(operation) {
+            currentOperation = operation;
+            
+            // 更新按钮样式
+            addBtn.classList.remove('active');
+            subtractBtn.classList.remove('active');
+            mixedBtn.classList.remove('active');
+            
+            if (operation === 'add') {
+                addBtn.classList.add('active');
+            } else if (operation === 'subtract') {
+                subtractBtn.classList.add('active');
+            } else {
+                mixedBtn.classList.add('active');
+            }
+            
+            // 生成新题目
+            problemElement.dataset.answer = generateProblem();
+        }
+        
+        // 事件监听
+        checkBtn.addEventListener('click', checkAnswer);
+        answerElement.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+        
+        addBtn.addEventListener('click', () => setOperation('add'));
+        subtractBtn.addEventListener('click', () => setOperation('subtract'));
+        mixedBtn.addEventListener('click', () => setOperation('mixed'));
+        
+        // 初始化游戏
+        setOperation('add');
+    </script>
+</body>
+</html>
