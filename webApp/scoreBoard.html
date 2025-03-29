@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成绩看板</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --primary-dark: #3367D6;
+            --text-primary: #202124;
+            --text-secondary: #5F6368;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --divider-color: #dadce0;
+            --success-color: #34A853;
+            --warning-color: #FBBC05;
+            --danger-color: #EA4335;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            height: 100vh;
+            position: fixed;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 24px 20px;
+            border-bottom: 1px solid var(--divider-color);
+            margin-bottom: 20px;
+        }
+        
+        .logo .material-icons {
+            color: var(--primary-color);
+            font-size: 32px;
+            margin-right: 12px;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(66, 133, 244, 0.08);
+        }
+        
+        .nav-item.active {
+            background-color: rgba(66, 133, 244, 0.15);
+            color: var(--primary-color);
+        }
+        
+        .nav-item.active .material-icons {
+            color: var(--primary-color);
+        }
+        
+        .nav-item .material-icons {
+            margin-right: 16px;
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+        
+        /* 主内容区样式 */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 24px 32px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .header h2 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--divider-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(0,0,0,0.04);
+        }
+        
+        .btn .material-icons {
+            font-size: 18px;
+            margin-right: 8px;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        /* 统计卡片样式 */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card .title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        /* 表格样式 */
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .grades-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--divider-color);
+        }
+        
+        .grades-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--divider-color);
+        }
+        
+        .student-id {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .grade {
+            font-weight: 500;
+        }
+        
+        .grade.A {
+            color: var(--success-color);
+        }
+        
+        .grade.B {
+            color: #34A853;
+        }
+        
+        .grade.C {
+            color: var(--warning-color);
+        }
+        
+        .grade.D {
+            color: #FBBC05;
+        }
+        
+        .grade.F {
+            color: var(--danger-color);
+        }
+        
+        /* 排序表头样式 */
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 24px !important;
+        }
+        
+        .sortable:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+        
+        .sortable::after {
+            content: 'swap_vert';
+            font-family: 'Material Icons';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+        
+        .sortable.asc::after {
+            content: 'arrow_upward';
+            opacity: 1;
+            color: var(--primary-color);
+        }
+        
+        .sortable.desc::after {
+            content: 'arrow_downward';
+            opacity: 1;
+            color: var(--primary-color);
+        }
+        
+        /* 导入CSV模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .file-upload {
+            border: 2px dashed var(--divider-color);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(66, 133, 244, 0.05);
+        }
+        
+        .file-upload .material-icons {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+        
+        .file-upload input {
+            display: none;
+        }
+        
+        .file-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        /* 图表容器样式 */
+        .charts-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 16px;
+        }
+        
+        .chart-wrapper {
+            flex: 1;
+            min-width: 300px;
+            height: 280px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .charts-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .charts-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .main-content {
+                margin-left: 240px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 100;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 16px;
+                left: 16px;
+                z-index: 101;
+                background-color: var(--card-bg);
+                border-radius: 50%;
+                width: 48px;
+                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                cursor: pointer;
+                background: var(--primary-color);
+                color: white;
+            }
+            
+            .menu-toggle .material-icons {
+                font-size: 24px;
+            }
+            
+            .charts-container {
+                padding: 8px;
+            }
+            
+            .chart-wrapper {
+                min-width: 100%;
+                height: 240px;
+            }
+        }
+        
+        /* 数据组列表样式 */
+        .datasets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .dataset-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .dataset-item:hover {
+            background: rgba(66, 133, 244, 0.05);
+        }
+        
+        .dataset-item.active {
+            background: rgba(66, 133, 244, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .dataset-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .dataset-name {
+            font-weight: 500;
+        }
+        
+        .dataset-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .dataset-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .dataset-action-btn {
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        
+        .dataset-action-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .dataset-action-btn.delete:hover {
+            color: var(--danger-color);
+        }
+        
+        /* 创建数据组模态框样式 */
+        .input-group {
+            margin-bottom: 16px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--divider-color);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        }
+
+        /* 提示消息样式 */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column-reverse; /* 更改为column-reverse以使新消息从底部出现 */
+            gap: 8px;
+            pointer-events: none;
+            width: auto;
+            min-width: 288px;
+            max-width: 568px;
+        }
+
+        .toast {
+            background: #323232;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+            box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            margin-bottom: 8px;
+            will-change: transform, opacity;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: var(--success-color);
+        }
+
+        .toast.error {
+            background: var(--danger-color);
+        }
+
+        .toast.warning {
+            background: var(--warning-color);
+            color: #333;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .toast .material-icons {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast-action {
+            margin-left: 24px;
+            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 13px;
+            color: inherit;
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .toast-action:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .toast-container {
+                width: calc(100% - 32px);
+                max-width: none;
+            }
+
+            .toast {
+                padding: 10px 16px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <span class="material-icons">school</span>
+                <h1>成绩管理系统</h1>
+            </div>
+            <div class="nav-item active" data-view="dashboard">
+                <span class="material-icons">dashboard</span>
+                <span>成绩看板</span>
+            </div>
+            <div class="nav-item" data-view="details">
+                <span class="material-icons">list_alt</span>
+                <span>详细成绩</span>
+            </div>
+            <div class="nav-item" data-view="datasets">
+                <span class="material-icons">storage</span>
+                <span>数据选择</span>
+            </div>
+            <div class="nav-item">
+                <span class="material-icons">settings</span>
+                <span>待开发</span>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <div class="header">
+                <h2 id="pageTitle">成绩看板</h2>
+            </div>
+
+            <!-- 成绩看板 -->
+            <div id="dashboardView">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="title">学生总数</div>
+                        <div class="value" id="totalStudents">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="title">语文平均分</div>
+                        <div class="value" id="chineseAvg">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="title">数学平均分</div>
+                        <div class="value" id="mathAvg">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="title">英语平均分</div>
+                        <div class="value" id="englishAvg">0</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">各科成绩分布</div>
+                    </div>
+                    <div id="gradeDistribution" class="charts-container">
+                        <div class="chart-wrapper">
+                            <canvas id="chineseChart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="mathChart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="englishChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细成绩 -->
+            <div id="detailsView" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">学生成绩列表</div>
+                        <button class="btn btn-outline" id="exportBtn">
+                            <span class="material-icons">download</span>
+                            导出CSV
+                        </button>
+                    </div>
+                    <table class="grades-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="id">学号</th>
+                                <th>姓名</th>
+                                <th class="sortable" data-sort="chinese">语文</th>
+                                <th class="sortable" data-sort="math">数学</th>
+                                <th class="sortable" data-sort="english">英语</th>
+                                <th class="sortable" data-sort="total">总分</th>
+                                <th class="sortable" data-sort="average">平均分</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesTableBody">
+                            <!-- 成绩数据将通过JavaScript动态加载 -->
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px 0; color: var(--text-secondary);">
+                                    <span class="material-icons" style="font-size: 48px; color: #ccc;">info</span>
+                                    <div>暂无数据，请先导入学生成绩</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 数据选择 -->
+            <div id="datasetsView" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">数据组管理</div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="importBtn">
+                                <span class="material-icons">upload</span>
+                                导入CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="datasets-list" id="datasetsList">
+                        <!-- 数据组将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入CSV模态框 -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">导入学生成绩</div>
+                <button class="close-btn" id="closeModal">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="file-upload" id="fileDropArea">
+                <span class="material-icons">cloud_upload</span>
+                <div>点击或拖拽文件到此处上传</div>
+                <div class="file-info">支持格式: .csv、.txt文件，内容格式为: 学号,姓名,语文,数学,英语</div>
+                <input type="file" id="fileInput" accept=".csv,.txt">
+            </div>
+            <div class="file-info" id="selectedFile">未选择文件</div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="cancelImport">取消</button>
+                <button class="btn btn-primary" id="confirmImport" disabled>导入</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移动端菜单切换按钮 -->
+    <div class="menu-toggle" id="menuToggle">
+        <span class="material-icons">menu</span>
+    </div>
+
+    <!-- 提示消息容器 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        let students = [];
+        let currentSort = {
+            column: null,
+            direction: 'asc'
+        };
+        let db;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 导航菜单切换
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    if (this.dataset.view) {
+                        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                        document.getElementById('dashboardView').style.display = 'none';
+                        document.getElementById('detailsView').style.display = 'none';
+                        document.getElementById('datasetsView').style.display = 'none';
+                        document.getElementById(this.dataset.view + 'View').style.display = 'block';
+                        document.getElementById('pageTitle').textContent = this.querySelector('span:not(.material-icons)').textContent;
+                    }
+                });
+            });
+
+            // 文件上传相关事件处理
+            const fileInput = document.getElementById('fileInput');
+            const fileDropArea = document.getElementById('fileDropArea');
+            const selectedFile = document.getElementById('selectedFile');
+
+            document.getElementById('importBtn').addEventListener('click', () => {
+                document.getElementById('importModal').style.display = 'flex';
+            });
+
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('cancelImport').addEventListener('click', closeModal);
+            fileDropArea.addEventListener('click', () => fileInput.click());
+
+            // 拖拽处理
+            fileDropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+                fileDropArea.style.borderColor = primaryColor;
+                fileDropArea.style.backgroundColor = 'rgba(66, 133, 244, 0.1)';
+            });
+
+            fileDropArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                const dividerColor = getComputedStyle(document.documentElement).getPropertyValue('--divider-color');
+                fileDropArea.style.borderColor = dividerColor;
+                fileDropArea.style.backgroundColor = 'transparent';
+            });
+
+            fileDropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const dividerColor = getComputedStyle(document.documentElement).getPropertyValue('--divider-color');
+                fileDropArea.style.borderColor = dividerColor;
+                fileDropArea.style.backgroundColor = 'transparent';
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect();
+                }
+            });
+
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // 添加确认导入按钮事件
+            document.getElementById('confirmImport').addEventListener('click', importCSV);
+
+            // 添加移动端菜单切换
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+            
+            // 点击主内容区域时关闭菜单
+            document.querySelector('.main-content').addEventListener('click', () => {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                }
+            });
+
+            // 监听窗口大小变化，调整图表
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (charts.chinese) {
+                        charts.chinese.resize();
+                        charts.math.resize();
+                        charts.english.resize();
+                    }
+                }, 250);
+            });
+
+            // 添加导出按钮事件监听
+            document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+
+            // 初始化IndexedDB
+            initDatabase().then(() => {
+                loadDatasets();
+            });
+
+            // 添加创建数据组按钮事件
+            document.getElementById('createDatasetBtn').addEventListener('click', () => {
+                showCreateDatasetModal();
+            });
+        });
+
+        function closeModal() {
+            document.getElementById('importModal').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('selectedFile').textContent = '未选择文件';
+            document.getElementById('confirmImport').disabled = true;
+        }
+
+        function handleFileSelect() {
+            if (fileInput.files.length) {
+                const file = fileInput.files[0];
+                selectedFile.textContent = `已选择: ${file.name}`;
+                document.getElementById('confirmImport').disabled = false;
+            }
+        }
+
+        async function importCSV() {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) return Toast.warning('文件未选择');
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const content = e.target.result;
+                const newStudents = parseCSVContent(content);
+                
+                // 创建新的数据组
+                const datasetId = await createDataset(file.name.replace(/\.[^/.]+$/, ""));
+                await saveStudentsToDataset(datasetId, newStudents);
+                
+                closeModal();
+                loadDatasets();
+                
+                // 自动选择新创建的数据组
+                selectDataset(datasetId);
+                Toast.success('数据导入成功');
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSVContent(csvData) {
+            const lines = csvData.split('\n');
+            const students = [];
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line) {
+                    const values = line.split(',');
+                    if (values.length >= 5) {
+                        students.push({
+                            id: values[0].trim(),
+                            name: values[1].trim(),
+                            chinese: parseFloat(values[2].trim()) || 0,
+                            math: parseFloat(values[3].trim()) || 0,
+                            english: parseFloat(values[4].trim()) || 0
+                        });
+                    }
+                }
+            }
+            return students;
+        }
+
+        async function initDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('GradesDB', 1);
+                
+                request.onerror = () => reject(request.error);
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // 创建数据组存储
+                    if (!db.objectStoreNames.contains('datasets')) {
+                        const datasetsStore = db.createObjectStore('datasets', { keyPath: 'id', autoIncrement: true });
+                        datasetsStore.createIndex('name', 'name', { unique: true });
+                        datasetsStore.createIndex('createdAt', 'createdAt');
+                    }
+                    
+                    // 创建学生数据存储
+                    if (!db.objectStoreNames.contains('students')) {
+                        const studentsStore = db.createObjectStore('students', { keyPath: ['datasetId', 'id'] });
+                        studentsStore.createIndex('datasetId', 'datasetId');
+                    }
+                };
+                
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve();
+                };
+            });
+        }
+
+        async function createDataset(name) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['datasets'], 'readwrite');
+                const store = transaction.objectStore('datasets');
+                
+                const dataset = {
+                    name,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                const request = store.add(dataset);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function saveStudentsToDataset(datasetId, studentsData) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['students', 'datasets'], 'readwrite');
+                const studentsStore = transaction.objectStore('students');
+                const datasetsStore = transaction.objectStore('datasets');
+                
+                // 删除旧数据
+                const clearRequest = studentsStore.index('datasetId').openKeyCursor(IDBKeyRange.only(datasetId));
+                clearRequest.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        studentsStore.delete(cursor.primaryKey);
+                        cursor.continue();
+                    }
+                };
+                
+                // 添加新数据
+                studentsData.forEach(student => {
+                    studentsStore.add({
+                        ...student,
+                        datasetId
+                    });
+                });
+                
+                // 更新数据组更新时间
+                datasetsStore.get(datasetId).onsuccess = (event) => {
+                    const dataset = event.target.result;
+                    dataset.updatedAt = new Date().toISOString();
+                    datasetsStore.put(dataset);
+                };
+                
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = () => reject(transaction.error);
+            });
+        }
+
+        async function loadDatasets() {
+            const transaction = db.transaction(['datasets'], 'readonly');
+            const store = transaction.objectStore('datasets');
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+                const datasets = request.result;
+                renderDatasetsList(datasets);
+            };
+        }
+
+        function renderDatasetsList(datasets) {
+            const listElement = document.getElementById('datasetsList');
+            listElement.innerHTML = '';
+            
+            if (datasets.length === 0) {
+                listElement.innerHTML = `
+                    <div style="text-align: center; padding: 40px 0; color: var(--text-secondary);">
+                        <span class="material-icons" style="font-size: 48px; color: #ccc;">folder_open</span>
+                        <div>暂无数据组，请创建新的数据组</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            datasets.forEach(dataset => {
+                const item = document.createElement('div');
+                item.className = 'dataset-item';
+                item.innerHTML = `
+                    <div class="dataset-info">
+                        <div class="dataset-name">${dataset.name}</div>
+                        <div class="dataset-meta">
+                            创建时间: ${new Date(dataset.createdAt).toLocaleString()}
+                            | 最后更新: ${new Date(dataset.updatedAt).toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="dataset-actions">
+                        <button class="dataset-action-btn select" title="选择此数据组">
+                            <span class="material-icons">check_circle_outline</span>
+                        </button>
+                        <button class="dataset-action-btn delete" title="删除此数据组">
+                            <span class="material-icons">delete_outline</span>
+                        </button>
+                    </div>
+                `;
+                
+                // 添加选择数据组事件
+                item.querySelector('.select').addEventListener('click', () => {
+                    selectDataset(dataset.id);
+                });
+                
+                // 添加删除数据组事件
+                item.querySelector('.delete').addEventListener('click', () => {
+                    deleteDataset(dataset.id);
+                });
+                
+                listElement.appendChild(item);
+            });
+        }
+
+        async function selectDataset(datasetId) {
+            const transaction = db.transaction(['students'], 'readonly');
+            const store = transaction.objectStore('students');
+            const request = store.index('datasetId').getAll(datasetId);
+            
+            request.onsuccess = () => {
+                students = request.result.map(({ datasetId, ...student }) => student);
+                updateDashboard();
+                renderGradesTable();
+                
+                // 切换到成绩看板视图
+                document.querySelector('[data-view="dashboard"]').click();
+                Toast.success('已切换数据组');
+            };
+        }
+
+        async function deleteDataset(datasetId) {
+            // 使用原生confirm进行确认
+            if (!confirm('确定要删除这个数据组吗？此操作不可恢复。')) {
+                return;
+            }
+
+            try {
+                const transaction = db.transaction(['datasets', 'students'], 'readwrite');
+                const datasetsStore = transaction.objectStore('datasets');
+                const studentsStore = transaction.objectStore('students');
+                
+                // 删除数据组
+                datasetsStore.delete(datasetId);
+                
+                // 删除关联的学生数据
+                const studentsCursor = studentsStore.index('datasetId').openKeyCursor(IDBKeyRange.only(datasetId));
+                studentsCursor.onsuccess = (event) => {
+                    const cursor = event.target.result;
+                    if (cursor) {
+                        studentsStore.delete(cursor.primaryKey);
+                        cursor.continue();
+                    }
+                };
+                
+                // 等待事务完成
+                await new Promise((resolve, reject) => {
+                    transaction.oncomplete = () => {
+                        loadDatasets();
+                        Toast.success('数据组已删除');
+                        resolve();
+                    };
+                    transaction.onerror = () => {
+                        Toast.error('删除失败');
+                        reject(transaction.error);
+                    };
+                });
+            } catch (error) {
+                console.error('删除数据组时出错:', error);
+                Toast.error('删除失败：' + error.message);
+            }
+        }
+
+        function getGradeDistribution(scores) {
+            return {
+                fail: scores.filter(score => score < 60).length,
+                normal: scores.filter(score => score >= 60 && score < 90).length,
+                excellent: scores.filter(score => score >= 90).length
+            };
+        }
+
+        function createChart(canvasId, label, data) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['不及格(<60)', '正常(60-89)', '优秀(≥90)'],
+                    datasets: [{
+                        data: [data.fail, data.normal, data.excellent],
+                        backgroundColor: [
+                            '#FFA500',
+                            '#87CEEB',
+                            '#800080'
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: label + '成绩分布',
+                            font: {
+                                size: window.innerWidth < 768 ? 12 : 14
+                            },
+                            padding: {
+                                top: 8,
+                                bottom: 16
+                            }
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => `${context.parsed.y}人`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                },
+                                maxTicksLimit: 6
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                },
+                                maxRotation: 0,
+                                autoSkip: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        let charts = {
+            chinese: null,
+            math: null,
+            english: null
+        };
+
+        function updateDashboard() {
+            document.getElementById('totalStudents').textContent = students.length;
+            if (students.length > 0) {
+                const chineseSum = students.reduce((sum, student) => sum + student.chinese, 0);
+                const mathSum = students.reduce((sum, student) => sum + student.math, 0);
+                const englishSum = students.reduce((sum, student) => sum + student.english, 0);
+                document.getElementById('chineseAvg').textContent = (chineseSum / students.length).toFixed(1);
+                document.getElementById('mathAvg').textContent = (mathSum / students.length).toFixed(1);
+                document.getElementById('englishAvg').textContent = (englishSum / students.length).toFixed(1);
+                
+                const chineseData = getGradeDistribution(students.map(s => s.chinese));
+                const mathData = getGradeDistribution(students.map(s => s.math));
+                const englishData = getGradeDistribution(students.map(s => s.english));
+
+                if (charts.chinese) charts.chinese.destroy();
+                if (charts.math) charts.math.destroy();
+                if (charts.english) charts.english.destroy();
+
+                charts.chinese = createChart('chineseChart', '语文', chineseData);
+                charts.math = createChart('mathChart', '数学', mathData);
+                charts.english = createChart('englishChart', '英语', englishData);
+
+                document.getElementById('gradeDistribution').style.display = 'flex';
+            }
+        }
+
+        function renderGradesTable() {
+            const tbody = document.getElementById('gradesTableBody');
+            tbody.innerHTML = '';
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px 0; color: var(--text-secondary);">
+                            <span class="material-icons" style="font-size: 48px; color: #ccc;">info</span>
+                            <div>暂无数据，请先导入学生成绩</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // 初始化表头排序事件
+            document.querySelectorAll('.sortable').forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.sort;
+                    if (currentSort.column === column) {
+                        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        document.querySelectorAll('.sortable').forEach(h => {
+                            h.classList.remove('asc', 'desc');
+                        });
+                        currentSort.column = column;
+                        currentSort.direction = 'asc';
+                    }
+                    header.classList.remove('asc', 'desc');
+                    header.classList.add(currentSort.direction);
+                    
+                    sortAndRenderStudents();
+                });
+            });
+
+            sortAndRenderStudents();
+        }
+
+        function sortAndRenderStudents() {
+            const tbody = document.getElementById('gradesTableBody');
+            tbody.innerHTML = '';
+
+            let sortedStudents = [...students];
+            if (currentSort.column) {
+                sortedStudents.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(currentSort.column) {
+                        case 'id':
+                            [aValue, bValue] = [a.id, b.id];
+                            break;
+                        case 'chinese':
+                        case 'math':
+                        case 'english':
+                            [aValue, bValue] = [a[currentSort.column], b[currentSort.column]];
+                            break;
+                        case 'total':
+                            aValue = a.chinese + a.math + a.english;
+                            bValue = b.chinese + b.math + b.english;
+                            break;
+                        case 'average':
+                            aValue = (a.chinese + a.math + a.english) / 3;
+                            bValue = (b.chinese + b.math + b.english) / 3;
+                            break;
+                        default:
+                            return 0;
+                    }
+
+                    if (currentSort.direction === 'asc') {
+                        return aValue > bValue ? 1 : -1;
+                    } else {
+                        return aValue < bValue ? 1 : -1;
+                    }
+                });
+            }
+            
+            // 保存当前排序后的学生列表，用于导出
+            window.currentSortedStudents = sortedStudents;
+
+            sortedStudents.forEach(student => {
+                const total = student.chinese + student.math + student.english;
+                const average = total / 3;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="student-id">${student.id}</span></td>
+                    <td>${student.name}</td>
+                    <td>${student.chinese}</td>
+                    <td>${student.math}</td>
+                    <td>${student.english}</td>
+                    <td>${total}</td>
+                    <td>${average.toFixed(1)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function exportToCSV() {
+            if (!window.currentSortedStudents || window.currentSortedStudents.length === 0) {
+                Toast.warning('没有可导出的数据');
+                return;
+            }
+
+            // 准备CSV内容
+            const headers = ['排名', '学号', '姓名', '语文', '数学', '英语', '总分', '平均分'];
+            let csvContent = headers.join(',') + '\n';
+
+            window.currentSortedStudents.forEach((student, index) => {
+                const total = student.chinese + student.math + student.english;
+                const average = (total / 3).toFixed(1);
+                const row = [
+                    index + 1,
+                    student.id,
+                    student.name,
+                    student.chinese,
+                    student.math,
+                    student.english,
+                    total,
+                    average
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+
+            // 创建下载链接
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const date = new Date().toISOString().split('T')[0];
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `学生成绩表_${date}.csv`);
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            Toast.success('导出成功');
+        }
+
+        // 提示消息工具函数
+        const Toast = {
+            container: null,
+            isInitialized: false,
+            
+            init() {
+                if (!this.isInitialized) {
+                    this.container = document.getElementById('toastContainer');
+                    if (!this.container) {
+                        this.container = document.createElement('div');
+                        this.container.className = 'toast-container';
+                        this.container.id = 'toastContainer';
+                        document.body.appendChild(this.container);
+                    }
+                    this.isInitialized = true;
+                }
+            },
+            
+            ensureInitialized() {
+                if (!this.isInitialized) {
+                    this.init();
+                }
+            },
+            
+            show(message, type = 'default', duration = 3000, action = null) {
+                this.ensureInitialized();
+                
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                let icon;
+                switch(type) {
+                    case 'success':
+                        icon = 'check_circle';
+                        break;
+                    case 'error':
+                        icon = 'error';
+                        break;
+                    case 'warning':
+                        icon = 'warning';
+                        break;
+                    default:
+                        icon = 'info';
+                }
+                
+                toast.innerHTML = `
+                    <div class="toast-content">
+                        <span class="material-icons">${icon}</span>
+                        <span>${message}</span>
+                    </div>
+                    ${action ? `<button class="toast-action">${action.text}</button>` : ''}
+                `;
+                
+                this.container.appendChild(toast);
+                
+                // 强制重绘
+                toast.offsetHeight;
+                
+                // 显示动画
+                toast.classList.add('show');
+                
+                // 添加动作按钮事件
+                if (action) {
+                    const actionBtn = toast.querySelector('.toast-action');
+                    actionBtn.addEventListener('click', () => {
+                        action.callback();
+                        this.dismiss(toast);
+                    });
+                }
+                
+                // 自动关闭
+                if (duration > 0) {
+                    setTimeout(() => this.dismiss(toast), duration);
+                }
+                
+                return toast;
+            },
+            
+            dismiss(toast) {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            },
+            
+            success(message, duration) {
+                this.ensureInitialized();
+                return this.show(message, 'success', duration);
+            },
+            
+            error(message, duration) {
+                this.ensureInitialized();
+                return this.show(message, 'error', duration);
+            },
+            
+            warning(message, duration) {
+                this.ensureInitialized();
+                return this.show(message, 'warning', duration);
+            }
+        };
+    </script>
+</body>
+</html>
