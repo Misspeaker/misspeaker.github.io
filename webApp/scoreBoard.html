@@ -110,6 +110,7 @@
         .header h2 {
             font-size: 24px;
             font-weight: 500;
+            margin-left: 40px;
         }
         
         .action-buttons {
@@ -208,7 +209,7 @@
         }
         
         .grades-table th {
-            text-align: left;
+            text-align: center;
             padding: 12px 16px;
             font-weight: 500;
             color: var(--text-secondary);
@@ -217,6 +218,7 @@
         
         .grades-table td {
             padding: 16px;
+            text-align: center;
             border-bottom: 1px solid var(--divider-color);
         }
         
@@ -427,7 +429,7 @@
             }
             
             .action-buttons {
-                width: 100%;
+                width: auto;
                 justify-content: space-between;
             }
             
@@ -655,6 +657,86 @@
                 padding: 10px 16px;
             }
         }
+
+        /* 使用指南样式优化 */
+        .guide-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        .guide-section {
+            margin-bottom: 32px;
+            padding: 24px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .guide-section:hover {
+            background-color: #f1f3f4;
+            transition: background-color 0.2s;
+        }
+
+        .guide-section h3 {
+            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .guide-section .material-icons {
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        .guide-section p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 8px 0;
+            padding-left: 28px;
+        }
+
+        .guide-section code {
+            background-color: #e8f0fe;
+            color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .guide-section strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .guide-section ol {
+            padding-left: 48px;
+            margin: 12px 0;
+        }
+
+        .guide-section li {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .guide-faq {
+            background-color: #e8f0fe;
+            border-radius: 8px;
+            padding: 16px 24px;
+            margin-top: 16px;
+        }
+
+        .guide-faq strong {
+            color: var(--primary-color);
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -678,9 +760,9 @@
                 <span class="material-icons">storage</span>
                 <span>数据选择</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-view="guide">
                 <span class="material-icons">settings</span>
-                <span>待开发</span>
+                <span>使用指南</span>
             </div>
         </div>
 
@@ -781,6 +863,64 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 使用指南 -->
+            <div id="guideView" style="display: none;">
+                <div class="card">
+                    <div class="guide-content">
+                        <section class="guide-section">
+                            <h3>
+                                <span class="material-icons">upload_file</span>
+                                数据导入指南
+                            </h3>
+                            <ol>
+                                <li>在数据选择中点击右上角的 <strong>"导入CSV"</strong> 按钮</li>
+                                <li>选择或拖拽CSV文件到上传区域</li>
+                                <li>确保CSV文件格式为：<code>学号,姓名,语文,数学,英语</code></li>
+                                <li>点击 <strong>"导入"</strong> 按钮完成数据上传</li>
+                            </ol>
+                        </section>
+                        
+                        <section class="guide-section">
+                            <h3>
+                                <span class="material-icons">dashboard</span>
+                                成绩看板功能
+                            </h3>
+                            <p>• 查看班级总人数和各科平均分</p>
+                            <p>• 通过图表直观了解各科成绩分布</p>
+                            <p>• 支持优秀、及格、不及格人数统计</p>
+                        </section>
+                        
+                        <section class="guide-section">
+                            <h3>
+                                <span class="material-icons">list_alt</span>
+                                详细成绩管理
+                            </h3>
+                            <p>• 查看所有学生的详细成绩信息</p>
+                            <p>• 点击表头可按照不同列进行排序</p>
+                            <p>• 支持导出当前排序后的成绩表为CSV文件</p>
+                        </section>
+                        
+                        <section class="guide-section">
+                            <h3>
+                                <span class="material-icons">storage</span>
+                                数据管理功能
+                            </h3>
+                            <p>• 支持管理多个班级或考试的成绩数据</p>
+                            <p>• 可以自由切换不同的数据组</p>
+                            <p>• 支持删除不需要的数据组</p>
+                            
+                            <div class="guide-faq">
+                                <p><strong>常见问题解答：</strong></p>
+                                <p><strong>Q：</strong> 如何确保CSV文件格式正确？</p>
+                                <p><strong>A：</strong> 请确保文件包含以下列：学号、姓名、语文、数学、英语，以逗号分隔。</p>
+                                <p><strong>Q：</strong> 为什么导入后没有显示数据？</p>
+                                <p><strong>A：</strong> 请检查文件内容是否符合格式要求，或尝试刷新页面。</p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -833,6 +973,7 @@
                         document.getElementById('dashboardView').style.display = 'none';
                         document.getElementById('detailsView').style.display = 'none';
                         document.getElementById('datasetsView').style.display = 'none';
+                        document.getElementById('guideView').style.display = 'none';
                         document.getElementById(this.dataset.view + 'View').style.display = 'block';
                         document.getElementById('pageTitle').textContent = this.querySelector('span:not(.material-icons)').textContent;
                     }
