@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阳光小学四年级二班期中考试成绩</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3f51b5;
+            --primary-dark: #303f9f;
+            --primary-light: #c5cae9;
+            --accent: #ff4081;
+            --text-primary: rgba(0, 0, 0, 0.87);
+            --text-secondary: rgba(0, 0, 0, 0.54);
+            --divider: rgba(0, 0, 0, 0.12);
+            --background: #f5f5f5;
+            --surface: #ffffff;
+            --error: #f44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 顶部应用栏 */
+        .app-bar {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+        }
+        
+        .app-bar-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-left: 16px;
+        }
+        
+        /* 内容卡片 */
+        .card {
+            background-color: var(--surface);
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            margin: 16px 0;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--divider);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+        
+        .card-content {
+            padding: 0;
+            overflow-x: auto;
+        }
+        
+        /* 数据表格 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table thead {
+            background-color: var(--primary-light);
+        }
+        
+        .data-table th {
+            padding: 12px 16px;
+            font-size: larger;
+            text-align: center;
+            color: var(--text-primary);
+            position: relative;
+        }
+        
+        .data-table th.sortable {
+            cursor: pointer;
+        }
+        
+        .data-table th.sortable:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+        
+        .sort-icon {
+            margin-left: 4px;
+            vertical-align: middle;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .data-table th.sortable:hover .sort-icon,
+        .data-table th.sorted .sort-icon {
+            opacity: 1;
+        }
+        
+        .data-table td {
+            padding: 12px 16px;
+            font-size: larger;
+            text-align: center;
+            border-bottom: 1px solid var(--divider);
+        }
+        .data-table td:hover {
+            background-color: #fafff7;
+        }
+        
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 分数颜色 */
+        .score-excellent {
+            color: #29ad29;
+            font-weight: 500;
+        }
+        
+        .score-good {
+            color: #4c91b9;
+        }
+        
+        .score-average {
+            color: #393700;
+        }
+        
+        .score-poor {
+            color: #f44336;
+        }
+        
+        /* 统计信息 */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .stat-card {
+            background-color: var(--surface);
+            border-radius: 4px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        }
+        
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        /* 按钮 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+            outline: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .app-bar-title {
+                font-size: 1rem;
+            }
+
+            .container {
+            padding: 10px;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+            }
+            
+            .data-table th, 
+            .data-table td {
+                padding: 8px 12px;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-bar">
+        <i class="material-icons">school</i>
+        <h1 class="app-bar-title">阳光小学四年级二班期中考试成绩</h1>
+    </header>
+    
+    <div class="container" id="printable-area">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">学生成绩表</h2>
+                <button id="print-btn" class="btn btn-primary">
+                    <i class="material-icons" style="font-size: 18px; margin-right: 4px;">print</i>
+                    打印成绩单
+                </button>
+            </div>
+            <div class="card-content">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>姓名
+                            </th>
+                            <th class="sortable" data-sort="chinese">语文
+                                <i class="material-icons sort-icon">arrow_downward</i>
+                            </th>
+                            <th class="sortable" data-sort="math">数学
+                                <i class="material-icons sort-icon">arrow_downward</i>
+                            </th>
+                            <th class="sortable" data-sort="english">英语
+                                <i class="material-icons sort-icon">arrow_downward</i>
+                            </th>
+                            <th class="sortable sorted" data-sort="total">总分
+                                <i class="material-icons sort-icon">arrow_downward</i>
+                            </th>
+                            <th>排名</th>
+                        </tr>
+                    </thead>
+                    <tbody id="score-table-body">
+                        <!-- 成绩数据将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-title">语文平均分</div>
+                <div class="stat-value" id="chinese-avg">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">数学平均分</div>
+                <div class="stat-value" id="math-avg">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">英语平均分</div>
+                <div class="stat-value" id="english-avg">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">总平均分</div>
+                <div class="stat-value" id="total-avg">--</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 学生成绩数据
+        const students = [
+            { name: "林芷若", chinese: 92, math: 88, english: 95 },
+            { name: "苏沐橙", chinese: 85, math: 94, english: 89 },
+            { name: "叶修远", chinese: 78, math: 82, english: 76 },
+            { name: "楚雨荨", chinese: 95, math: 96, english: 98 },
+            { name: "慕容云", chinese: 88, math: 91, english: 87 },
+            { name: "沈清秋", chinese: 76, math: 85, english: 80 },
+            { name: "白浅歌", chinese: 80, math: 89, english: 93 },
+            { name: "夜华轩", chinese: 82, math: 78, english: 85 },
+            { name: "花千雪", chinese: 94, math: 97, english: 91 },
+            { name: "墨连城", chinese: 87, math: 83, english: 88 },
+            { name: "顾南衣", chinese: 79, math: 56, english: 82 },
+            { name: "凤九霄", chinese: 91, math: 92, english: 94 },
+            { name: "萧景琰", chinese: 83, math: 87, english: 84 },
+            { name: "梅苏", chinese: 96, math: 88, english: 97 },
+            { name: "霓漫天", chinese: 84, math: 80, english: 83 },
+            { name: "言豫津", chinese: 89, math: 90, english: 92 },
+            { name: "秦般若", chinese: 77, math: 79, english: 81 },
+            { name: "谢玉衡", chinese: 93, math: 95, english: 76 },
+            { name: "云浅月", chinese: 86, math: 84, english: 89 },
+            { name: "容景曜", chinese: 80, math: 81, english: 78 },
+            { name: "蓝忘机", chinese: 77, math: 59, english: 68 },
+            { name: "魏无羡", chinese: 75, math: 77, english: 79 },
+            { name: "江晚吟", chinese: 90, math: 93, english: 91 },
+            { name: "金子轩", chinese: 82, math: 85, english: 83 },
+            { name: "温情柔", chinese: 88, math: 86, english: 90 },
+            { name: "聂明玦", chinese: 79, math: 88, english: 82 },
+            { name: "晓星尘", chinese: 94, math: 92, english: 95 },
+            { name: "宋岚清", chinese: 81, math: 83, english: 85 },
+            { name: "阿箐儿", chinese: 87, math: 89, english: 88 },
+            { name: "薛成美", chinese: 73, math: 75, english: 77 }
+        ];
+
+        // 计算总分和排名
+        function calculateTotalsAndRankings() {
+            // 计算总分
+            students.forEach(student => {
+                student.total = student.chinese + student.math + student.english;
+            });
+            
+            // 按总分排序
+            const sortedStudents = [...students].sort((a, b) => b.total - a.total);
+            
+            // 分配排名
+            sortedStudents.forEach((student, index) => {
+                student.rank = index + 1;
+            });
+        }
+
+        // 渲染表格
+        function renderTable(data) {
+            const tableBody = document.getElementById('score-table-body');
+            tableBody.innerHTML = '';
+            
+            data.forEach(student => {
+                const row = document.createElement('tr');
+                
+                // 获取分数样式类
+                const getScoreClass = (score) => {
+                    if (score >= 90) return 'score-excellent';
+                    if (score >= 80) return 'score-good';
+                    if (score >= 60) return 'score-average';
+                    return 'score-poor';
+                };
+                
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td class="${getScoreClass(student.chinese)}">${student.chinese}</td>
+                    <td class="${getScoreClass(student.math)}">${student.math}</td>
+                    <td class="${getScoreClass(student.english)}">${student.english}</td>
+                    <td class="${getScoreClass(student.total/3)}">${student.total}</td>
+                    <td>${student.rank}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // 更新统计信息
+            updateStatistics(data);
+        }
+
+        // 更新统计信息
+        function updateStatistics(data) {
+            const chineseScores = data.map(s => s.chinese);
+            const mathScores = data.map(s => s.math);
+            const englishScores = data.map(s => s.english);
+            const totalScores = data.map(s => s.total);
+            
+            document.getElementById('chinese-avg').textContent = calculateAverage(chineseScores).toFixed(1);
+            document.getElementById('math-avg').textContent = calculateAverage(mathScores).toFixed(1);
+            document.getElementById('english-avg').textContent = calculateAverage(englishScores).toFixed(1);
+            document.getElementById('total-avg').textContent = calculateAverage(totalScores).toFixed(1);
+        }
+
+        // 计算平均值
+        function calculateAverage(scores) {
+            return scores.reduce((sum, score) => sum + score, 0) / scores.length;
+        }
+
+        // 排序功能
+        function setupSorting() {
+            const headers = document.querySelectorAll('.sortable');
+            let currentSort = 'total';
+            let ascending = false;
+            
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const sortKey = header.dataset.sort;
+                    
+                    // 更新排序图标
+                    headers.forEach(h => {
+                        h.classList.remove('sorted');
+                        const icon = h.querySelector('.sort-icon');
+                        icon.textContent = 'arrow_downward';
+                    });
+                    
+                    header.classList.add('sorted');
+                    const icon = header.querySelector('.sort-icon');
+                    
+                    if (currentSort === sortKey) {
+                        ascending = !ascending;
+                    } else {
+                        currentSort = sortKey;
+                        ascending = false;
+                    }
+                    
+                    icon.textContent = ascending ? 'arrow_upward' : 'arrow_downward';
+                    
+                    // 排序数据
+                    const sortedStudents = [...students].sort((a, b) => {
+                        if (ascending) {
+                            return a[sortKey] - b[sortKey];
+                        } else {
+                            return b[sortKey] - a[sortKey];
+                        }
+                    });
+                    
+                    renderTable(sortedStudents);
+                });
+            });
+        }
+
+        // 打印功能
+        function setupPrintButton() {
+            document.getElementById('print-btn').addEventListener('click', () => {
+                const printableArea = document.getElementById('printable-area');
+                const originalContent = document.body.innerHTML;
+
+                // 只保留可打印区域的内容
+                document.body.innerHTML = printableArea.outerHTML;
+
+                // 调用打印功能
+                window.print();
+
+                // 恢复原始内容
+                document.body.innerHTML = originalContent;
+
+                // 重新绑定事件和初始化
+                document.addEventListener('DOMContentLoaded', () => {
+                    setupPrintButton();
+                    setupSorting();
+                });
+            });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateTotalsAndRankings();
+            renderTable(students);
+            setupSorting();
+            setupPrintButton();
+        });
+    </script>
+</body>
+</html>
+``` 
