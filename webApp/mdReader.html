@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD 文件渲染器</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/core.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+    <style>
+        :root {
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --link-color: #0366d6;
+            --border-color: #e1e4e8;
+            --code-bg: #f6f8fa;
+            --blockquote-border: #dfe2e5;
+            --blockquote-bg: #f8f8f8;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            color: var(--text-color);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button, .file-input-label {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        button:hover, .file-input-label:hover {
+            background-color: #f6f8fa;
+        }
+        
+        button.active {
+            background-color: #0366d6;
+            color: white;
+            border-color: #0366d6;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .render-area {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            min-height: 300px;
+            background-color: var(--bg-color);
+            overflow: auto;
+        }
+        
+        .empty-state {
+            color: #6a737d;
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        /* GitHub 风格 (默认) */
+        .github-style {
+            --bg-color: #ffffff;
+            --text-color: #24292e;
+            --link-color: #0366d6;
+            --border-color: #e1e4e8;
+            --code-bg: #f6f8fa;
+            --blockquote-border: #dfe2e5;
+            --blockquote-bg: #f8f8f8;
+        }
+        
+        /* 手绘风格 */
+        .handwritten-style {
+            --bg-color: #fffff0;
+            --text-color: #333333;
+            --link-color: #8a2be2;
+            --border-color: #d3d3d3;
+            --code-bg: #f5f5f5;
+            --blockquote-border: #d3d3d3;
+            --blockquote-bg: #f9f9f9;
+            font-family: "Comic Sans MS", "Marker Felt", "Comic Neue", cursive;
+        }
+        
+        .handwritten-style h1, 
+        .handwritten-style h2, 
+        .handwritten-style h3, 
+        .handwritten-style h4, 
+        .handwritten-style h5, 
+        .handwritten-style h6 {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        
+        /* 学术风格 */
+        .academic-style {
+            --bg-color: #f9f9f7;
+            --text-color: #222222;
+            --link-color: #0056b3;
+            --border-color: #d1d1d1;
+            --code-bg: #f0f0f0;
+            --blockquote-border: #b3b3b3;
+            --blockquote-bg: #f0f0f0;
+            font-family: "Times New Roman", Times, serif;
+            line-height: 1.8;
+        }
+        
+        .academic-style h1, 
+        .academic-style h2, 
+        .academic-style h3 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .academic-style blockquote {
+            font-style: italic;
+            border-left: 4px solid var(--blockquote-border);
+            padding-left: 20px;
+            margin-left: 0;
+        }
+        
+        /* DeepSeek 风格 */
+        .deepseek-style {
+            --bg-color: #f5f7fa;
+            --text-color: #1a1a1a;
+            --link-color: #4b6ea8;
+            --border-color: #d8e1e8;
+            --code-bg: #e6eff7;
+            --blockquote-border: #c8d6e3;
+            --blockquote-bg: #ebf2f9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        .deepseek-style h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #d8e1e8;
+            padding-bottom: 10px;
+        }
+        
+        .deepseek-style h2 {
+            color: #34495e;
+            border-bottom: 1px dashed #d8e1e8;
+            padding-bottom: 5px;
+        }
+        
+        .deepseek-style a {
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .deepseek-style a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Markdown 内容样式 */
+        .markdown-body {
+            font-family: inherit;
+            color: var(--text-color);
+        }
+        
+        .markdown-body h1, 
+        .markdown-body h2, 
+        .markdown-body h3, 
+        .markdown-body h4, 
+        .markdown-body h5, 
+        .markdown-body h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: var(--text-color);
+        }
+        
+        .markdown-body h1 {
+            font-size: 2em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
+        }
+        
+        .markdown-body h2 {
+            font-size: 1.5em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
+        }
+        
+        .markdown-body p {
+            margin-bottom: 16px;
+        }
+        
+        .markdown-body a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+        
+        .markdown-body code {
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: var(--code-bg);
+            border-radius: 3px;
+            padding: 0.2em 0.4em;
+            font-size: 85%;
+        }
+        
+        .markdown-body pre {
+            background-color: var(--code-bg);
+            border-radius: 3px;
+            padding: 16px;
+            overflow: auto;
+            line-height: 1.45;
+            margin-bottom: 16px;
+        }
+        
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        
+        .markdown-body blockquote {
+            border-left: 4px solid var(--blockquote-border);
+            color: #6a737d;
+            padding: 0 1em;
+            margin: 0 0 16px 0;
+            background-color: var(--blockquote-bg);
+        }
+        
+        .markdown-body img {
+            max-width: 100%;
+            box-sizing: content-box;
+            background-color: var(--bg-color);
+        }
+        
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 16px;
+            display: block;
+            overflow: auto;
+        }
+        
+        .markdown-body table th {
+            font-weight: 600;
+            background-color: var(--code-bg);
+        }
+        
+        .markdown-body table th, 
+        .markdown-body table td {
+            padding: 6px 13px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .markdown-body table tr {
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .markdown-body table tr:nth-child(2n) {
+            background-color: var(--code-bg);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            button, .file-input-label {
+                flex-grow: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body class="github-style">
+    <header>
+        <h1>Markdown阅读器-失言</h1>
+        <div class="controls">
+            <label class="file-input-label">
+                📁上传文件
+                <input type="file" id="file-input" class="file-input" accept=".md,.markdown" />
+            </label>
+            <button id="github-btn" class="active">默认风格</button>
+            <button id="handwritten-btn">手绘风格</button>
+            <button id="academic-btn">简洁风格</button>
+            <button id="deepseek-btn">现代风格</button>
+        </div>
+    </header>
+    
+    <div class="render-area" id="render-area">
+        <div class="empty-state">
+            <p>请上传 Markdown 文件进行渲染</p>
+        </div>
+    </div>
+
+    <script>
+        // 初始化 marked 和 highlight.js
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(lang, code).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            langPrefix: 'hljs language-',
+            gfm: true,
+            breaks: false,
+            pedantic: false,
+            sanitize: false,
+            smartLists: true,
+            smartypants: false
+        });
+        
+        // 文件上传处理
+        const fileInput = document.getElementById('file-input');
+        const renderArea = document.getElementById('render-area');
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                renderMarkdown(content);
+            };
+            reader.readAsText(file);
+        });
+        
+        // 渲染 Markdown
+        function renderMarkdown(markdown) {
+            const html = marked.parse(markdown);
+            renderArea.innerHTML = `<div class="markdown-body">${html}</div>`;
+        }
+        
+        // 切换样式
+        document.getElementById('github-btn').addEventListener('click', function() {
+            document.body.className = 'github-style';
+            setActiveButton(this);
+        });
+        
+        document.getElementById('handwritten-btn').addEventListener('click', function() {
+            document.body.className = 'handwritten-style';
+            setActiveButton(this);
+        });
+        
+        document.getElementById('academic-btn').addEventListener('click', function() {
+            document.body.className = 'academic-style';
+            setActiveButton(this);
+        });
+        
+        document.getElementById('deepseek-btn').addEventListener('click', function() {
+            document.body.className = 'deepseek-style';
+            setActiveButton(this);
+        });
+        
+        function setActiveButton(activeButton) {
+            document.querySelectorAll('.controls button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            activeButton.classList.add('active');
+        }
+    </script>
+</body>
+</html>
