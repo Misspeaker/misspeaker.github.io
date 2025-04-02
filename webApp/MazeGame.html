@@ -313,11 +313,11 @@
 
                 // 关卡配置
                 const levels = [
-                    { width: 13, height: 13, complexity: 0.1, density: 0.1 }, // Level 1
-                    { width: 17, height: 17, complexity: 0.2, density: 0.15 }, // Level 2
-                    { width: 19, height: 19, complexity: 0.3, density: 0.2 },  // Level 3
-                    { width: 23, height: 23, complexity: 0.4, density: 0.25 }, // Level 4
-                    { width: 27, height: 27, complexity: 0.5, density: 0.3 }   // Level 5
+                    { width: 15, height: 15, complexity: 0.1, density: 0.15 }, // Level 1
+                    { width: 19, height: 19, complexity: 0.2, density: 0.15 }, // Level 2
+                    { width: 25, height: 25, complexity: 0.3, density: 0.2 },  // Level 3
+                    { width: 31, height: 31, complexity: 0.4, density: 0.2 }, // Level 4
+                    { width: 37, height: 37, complexity: 0.5, density: 0.3 }   // Level 5
                 ];
 
                 // 优化的迷宫生成函数
@@ -629,6 +629,9 @@
                         // 初始化状态
                         gameState.playerPosition = { x: 1, y: 1 };
                         gameState.exitPosition = { x: level.width - 2, y: level.height - 2 };
+
+                        //初始必重置一次迷宫
+                        restartLevel();
                 
                         // 更新显示
                         calculateCellSize();
