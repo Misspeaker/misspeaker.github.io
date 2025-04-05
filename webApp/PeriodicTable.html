@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互动元素周期表</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0f18; /* Dark blue/black background */
+            --grid-bg: rgba(15, 25, 40, 0.5);
+            --element-bg: rgba(20, 30, 50, 0.7);
+            --element-border: #1a2a40;
+            --text-color: #e0e0e0;
+            --text-muted: #88aaff;
+            --glow-color: #00ffff; /* Cyan glow */
+            --accent-color: #00eaff;
+
+            /* Category Colors (adjust brightness/saturation for tech feel) */
+            --color-diatomic-nonmetal: #00ff88;
+            --color-noble-gas: #cc00ff;
+            --color-alkali-metal: #ff4444;
+            --color-alkaline-earth-metal: #ffaa00;
+            --color-metalloid: #00cc44;
+            --color-polyatomic-nonmetal: #00aa88;
+            --color-post-transition-metal: #0088ff;
+            --color-transition-metal: #3366ff;
+            --color-lanthanide: #9933ff;
+            --color-actinide: #ff33aa;
+            --color-unknown: #667788;
+
+            --font-main: 'Orbitron', 'Noto Sans SC', sans-serif;
+            --font-details: 'Noto Sans SC', 'Roboto', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+            overflow-x: auto; /* Allow horizontal scrolling if needed */
+        }
+
+        h1 {
+            color: var(--accent-color);
+            text-shadow: 0 0 8px var(--glow-color);
+            margin-bottom: 30px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .periodic-table-container {
+            display: flex;
+            flex-direction: column; /* Stack table and details */
+            align-items: center;
+            width: 100%;
+            max-width: 1400px; /* Limit max width */
+        }
+
+        #periodic-table {
+            display: grid;
+            grid-template-columns: repeat(18, minmax(55px, 1fr)); /* 18 columns */
+            grid-template-rows: repeat(10, minmax(60px, 1fr));   /* 7 main rows + 2 lanthanide/actinide + 1 gap */
+            gap: 4px;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: var(--grid-bg);
+            border-radius: 8px;
+            border: 1px solid var(--element-border);
+            box-shadow: 0 0 15px rgba(0, 200, 255, 0.1);
+             /* Force minimum width */
+             min-width: calc(18 * 55px + 17 * 4px + 20px);
+        }
+
+        .element {
+            background-color: var(--element-bg);
+            border: 1px solid var(--element-border);
+            border-radius: 3px;
+            padding: 5px 3px 3px 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            position: relative; /* For pseudo-elements if needed */
+            overflow: hidden; /* Ensure content fits */
+        }
+
+        .element:hover {
+            transform: scale(1.08);
+            z-index: 10;
+            box-shadow: 0 0 12px var(--glow-color);
+            border-color: var(--glow-color);
+        }
+        .element.active {
+            box-shadow: 0 0 15px 2px var(--accent-color);
+            border: 2px solid var(--accent-color);
+             transform: scale(1.05);
+             z-index: 9; /* Below hover */
+        }
+
+
+        .element .number {
+            font-size: 0.7em;
+            align-self: flex-start; /* Top-left corner */
+            color: var(--text-muted);
+            margin-left: 2px;
+             margin-bottom: auto; /* Pushes symbol and name down */
+        }
+
+        .element .symbol {
+            font-size: 1.4em;
+            font-weight: 700;
+            line-height: 1;
+            margin-top: -2px; /* Adjust spacing */
+        }
+
+        .element .name {
+            font-size: 0.6em;
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+             white-space: nowrap; /* Prevent wrapping */
+             overflow: hidden;
+             text-overflow: ellipsis;
+             width: 100%;
+             padding: 0 2px;
+        }
+
+
+        /* Category Styling */
+        .element.diatomic-nonmetal { border-left: 4px solid var(--color-diatomic-nonmetal); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-diatomic-nonmetal) 20%); }
+        .element.noble-gas { border-left: 4px solid var(--color-noble-gas); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-noble-gas) 20%); }
+        .element.alkali-metal { border-left: 4px solid var(--color-alkali-metal); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-alkali-metal) 20%); }
+        .element.alkaline-earth-metal { border-left: 4px solid var(--color-alkaline-earth-metal); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-alkaline-earth-metal) 20%); }
+        .element.metalloid { border-left: 4px solid var(--color-metalloid); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-metalloid) 20%); }
+        .element.polyatomic-nonmetal { border-left: 4px solid var(--color-polyatomic-nonmetal); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-polyatomic-nonmetal) 20%); }
+        .element.post-transition-metal { border-left: 4px solid var(--color-post-transition-metal); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-post-transition-metal) 20%); }
+        .element.transition-metal { border-left: 4px solid var(--color-transition-metal); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-transition-metal) 20%); }
+        .element.lanthanide { border-left: 4px solid var(--color-lanthanide); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-lanthanide) 20%); }
+        .element.actinide { border-left: 4px solid var(--color-actinide); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-actinide) 20%); }
+        .element.unknown { border-left: 4px solid var(--color-unknown); background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-unknown) 20%); }
+
+
+        /* Element Details Panel */
+        #element-details {
+            background-color: rgba(10, 15, 25, 0.8);
+            border: 1px solid var(--element-border);
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 10px; /* Space between table and details */
+            width: 100%;
+            max-width: 700px; /* Limit details panel width */
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.15);
+            backdrop-filter: blur(5px);
+            min-height: 200px; /* Placeholder height */
+            display: flex; /* Use flex for layout */
+            flex-direction: column;
+            align-items: center;
+             transition: opacity 0.3s ease;
+        }
+
+         #element-details.placeholder {
+            justify-content: center;
+            align-items: center;
+            font-style: italic;
+            color: var(--text-muted);
+            opacity: 0.7;
+         }
+         #element-details:not(.placeholder) {
+              opacity: 1;
+         }
+
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--element-border);
+            padding-bottom: 15px;
+            width: 100%;
+             justify-content: center; /* Center header items */
+             gap: 20px;
+        }
+
+        .detail-symbol {
+            font-size: 4em;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1;
+             min-width: 80px; /* Ensure space */
+             text-align: center;
+        }
+
+        .detail-name-number {
+            display: flex;
+            flex-direction: column;
+             align-items: flex-start; /* Align left within its group */
+        }
+
+        .detail-name {
+            font-size: 2em;
+            font-weight: 500;
+            margin-bottom: 2px;
+             color: var(--text-color);
+        }
+
+        .detail-number {
+            font-size: 1.2em;
+            color: var(--text-muted);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+            gap: 15px 25px; /* Row and column gap */
+            width: 100%;
+            font-family: var(--font-details); /* Use more readable font for details */
+            font-size: 0.95em;
+        }
+
+        .detail-item {
+             background: rgba(20, 30, 50, 0.5);
+             padding: 8px 12px;
+             border-radius: 4px;
+             border-left: 3px solid var(--glow-color);
+        }
+
+        .detail-item strong {
+            display: block;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+            font-size: 0.9em;
+            text-transform: capitalize; /* Capitalize category names etc. */
+        }
+         .detail-item span {
+             word-break: break-word; /* Allow long words like electron config to wrap */
+         }
+
+         /* Key/Legend (Optional) */
+         .legend {
+             margin: 10px 0 10px 0;
+             display: flex;
+             flex-wrap: wrap;
+             justify-content: center;
+             gap: 15px;
+             max-width: 1080px;
+             font-size: 0.8em;
+         }
+         .legend-item {
+             display: flex;
+             align-items: center;
+             gap: 6px;
+         }
+         .legend-color-box {
+             width: 15px;
+             height: 15px;
+             border-radius: 3px;
+             border: 1px solid rgba(255, 255, 255, 0.3);
+         }
+
+        /* Media Query for smaller screens */
+        @media (max-width: 768px) {
+             h1 { font-size: 1.8em; }
+             #periodic-table {
+                 grid-template-columns: repeat(18, minmax(45px, 1fr));
+                 grid-template-rows: repeat(10, minmax(50px, 1fr));
+                 gap: 3px;
+                 min-width: calc(18 * 45px + 17 * 3px + 20px);
+             }
+             .element .symbol { font-size: 1.1em; }
+             .element .number { font-size: 0.6em; }
+             .element .name { font-size: 0.5em; }
+
+             #element-details { max-width: 95%; padding: 15px; }
+             .detail-symbol { font-size: 3em; }
+             .detail-name { font-size: 1.5em; }
+             .detail-grid { font-size: 0.9em; }
+        }
+         @media (max-width: 480px) {
+             body { padding: 10px; }
+             h1 { font-size: 1.5em; margin-bottom: 20px; }
+             #periodic-table {
+                 grid-template-columns: repeat(18, minmax(35px, 1fr));
+                 grid-template-rows: repeat(10, minmax(40px, 1fr));
+                 gap: 2px;
+                 padding: 5px;
+                 min-width: calc(18 * 35px + 17 * 2px + 10px);
+             }
+             .element { padding: 2px 1px; border-left-width: 2px;}
+             .element .symbol { font-size: 0.9em; }
+             .element .number { font-size: 0.5em; margin-left: 1px;}
+             .element .name { display: none; /* Hide name on very small tiles */ }
+
+             #element-details { padding: 10px; }
+             .detail-header { gap: 10px; padding-bottom: 10px; margin-bottom: 10px;}
+             .detail-symbol { font-size: 2.5em; min-width: 50px; }
+             .detail-name { font-size: 1.3em; }
+             .detail-number { font-size: 1em; }
+             .detail-grid { grid-template-columns: 1fr; gap: 8px; } /* Single column on very small */
+             .detail-item { padding: 6px 10px;}
+         }
+
+    </style>
+</head>
+<body>
+    <!-- Optional: Legend -->
+    <div class="legend">
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-alkali-metal) 20%); border-color: var(--color-alkali-metal);"></span> <span>碱金属</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-alkaline-earth-metal) 20%); border-color: var(--color-alkaline-earth-metal);"></span> <span>碱土金属</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-transition-metal) 20%); border-color: var(--color-transition-metal);"></span> <span>过渡金属</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-post-transition-metal) 20%); border-color: var(--color-post-transition-metal);"></span> <span>后过渡金属</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-metalloid) 20%); border-color: var(--color-metalloid);"></span> <span>类金属</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-polyatomic-nonmetal) 20%); border-color: var(--color-polyatomic-nonmetal);"></span> <span>多原子非金属</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-diatomic-nonmetal) 20%); border-color: var(--color-diatomic-nonmetal);"></span> <span>双原子非金属</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-noble-gas) 20%); border-color: var(--color-noble-gas);"></span> <span>稀有气体</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-lanthanide) 20%); border-color: var(--color-lanthanide);"></span> <span>镧系元素</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-actinide) 20%); border-color: var(--color-actinide);"></span> <span>锕系元素</span></div>
+        <div class="legend-item"><span class="legend-color-box" style="background-color: color-mix(in srgb, var(--element-bg) 80%, var(--color-unknown) 20%); border-color: var(--color-unknown);"></span> <span>未知属性</span></div>
+   </div>
+
+    <div class="periodic-table-container">
+        <div id="periodic-table">
+            <!-- Elements will be generated here by JavaScript -->
+        </div>
+        <div id="element-details" class="placeholder">
+            点击一个元素查看详细信息
+        </div>
+    </div>
+
+    <script>
+        const periodicTableData = {
+            // Data source: Often adapted from public JSON files like https://github.com/Bowserinator/Periodic-Table-JSON
+            // Simplified and potentially modified for this example. Accuracy may vary.
+            "elements": [
+    { "number": 1, "symbol": "H", "name": "氢", "atomic_mass": 1.008, "category": "diatomic nonmetal", "phase": "Gas", "xpos": 1, "ypos": 1, "electron_configuration": "1s1", "summary": "最轻的元素，宇宙中含量最丰富。", "discovered_by": "Henry Cavendish" },
+    { "number": 2, "symbol": "He", "name": "氦", "atomic_mass": 4.0026022, "category": "noble gas", "phase": "Gas", "xpos": 18, "ypos": 1, "electron_configuration": "1s2", "summary": "惰性气体，用于填充气球和低温学。", "discovered_by": "Pierre Janssen & Norman Lockyer" },
+    { "number": 3, "symbol": "Li", "name": "锂", "atomic_mass": 6.94, "category": "alkali metal", "phase": "Solid", "xpos": 1, "ypos": 2, "electron_configuration": "[He] 2s1", "summary": "最轻的金属，用于电池。", "discovered_by": "Johan August Arfwedson" },
+    { "number": 4, "symbol": "Be", "name": "铍", "atomic_mass": 9.01218315, "category": "alkaline earth metal", "phase": "Solid", "xpos": 2, "ypos": 2, "electron_configuration": "[He] 2s2", "summary": "轻而坚硬的金属，用于合金和航空航天。", "discovered_by": "Louis Nicolas Vauquelin" },
+    { "number": 5, "symbol": "B", "name": "硼", "atomic_mass": 10.81, "category": "metalloid", "phase": "Solid", "xpos": 13, "ypos": 2, "electron_configuration": "[He] 2s2 2p1", "summary": "类金属，用于玻璃和半导体。", "discovered_by": "Joseph Louis Gay-Lussac" },
+    { "number": 6, "symbol": "C", "name": "碳", "atomic_mass": 12.011, "category": "polyatomic nonmetal", "phase": "Solid", "xpos": 14, "ypos": 2, "electron_configuration": "[He] 2s2 2p2", "summary": "生命的基础，形成多种化合物。", "discovered_by": "Ancient civilizations" },
+    { "number": 7, "symbol": "N", "name": "氮", "atomic_mass": 14.007, "category": "diatomic nonmetal", "phase": "Gas", "xpos": 15, "ypos": 2, "electron_configuration": "[He] 2s2 2p3", "summary": "空气的主要成分，用于化肥和制冷。", "discovered_by": "Daniel Rutherford" },
+    { "number": 8, "symbol": "O", "name": "氧", "atomic_mass": 15.999, "category": "diatomic nonmetal", "phase": "Gas", "xpos": 16, "ypos": 2, "electron_configuration": "[He] 2s2 2p4", "summary": "维持生命所必需，用于燃烧和呼吸。", "discovered_by": "Carl Wilhelm Scheele & Joseph Priestley" },
+    { "number": 9, "symbol": "F", "name": "氟", "atomic_mass": 18.9984031636, "category": "diatomic nonmetal", "phase": "Gas", "xpos": 17, "ypos": 2, "electron_configuration": "[He] 2s2 2p5", "summary": "最具电负性的元素，用于牙膏和制冷剂。", "discovered_by": "Henri Moissan" },
+    { "number": 10, "symbol": "Ne", "name": "氖", "atomic_mass": 20.17976, "category": "noble gas", "phase": "Gas", "xpos": 18, "ypos": 2, "electron_configuration": "[He] 2s2 2p6", "summary": "惰性气体，用于霓虹灯和激光。", "discovered_by": "Morris Travers & William Ramsay" },
+    { "number": 11, "symbol": "Na", "name": "钠", "atomic_mass": 22.989769282, "category": "alkali metal", "phase": "Solid", "xpos": 1, "ypos": 3, "electron_configuration": "[Ne] 3s1", "summary": "活泼的碱金属，存在于食盐中。", "discovered_by": "Humphry Davy" },
+    { "number": 12, "symbol": "Mg", "name": "镁", "atomic_mass": 24.305, "category": "alkaline earth metal", "phase": "Solid", "xpos": 2, "ypos": 3, "electron_configuration": "[Ne] 3s2", "summary": "轻质金属，用于合金和烟火。", "discovered_by": "Joseph Black" },
+    { "number": 13, "symbol": "Al", "name": "铝", "atomic_mass": 26.98153857, "category": "post-transition metal", "phase": "Solid", "xpos": 13, "ypos": 3, "electron_configuration": "[Ne] 3s2 3p1", "summary": "地壳中含量丰富的轻金属，用途广泛。", "discovered_by": "Hans Christian Ørsted" },
+    { "number": 14, "symbol": "Si", "name": "硅", "atomic_mass": 28.085, "category": "metalloid", "phase": "Solid", "xpos": 14, "ypos": 3, "electron_configuration": "[Ne] 3s2 3p2", "summary": "重要的半导体材料，用于芯片和玻璃。", "discovered_by": "Jöns Jacob Berzelius" },
+    { "number": 15, "symbol": "P", "name": "磷", "atomic_mass": 30.9737619985, "category": "polyatomic nonmetal", "phase": "Solid", "xpos": 15, "ypos": 3, "electron_configuration": "[Ne] 3s2 3p3", "summary": "存在于生命体中，用于火柴和化肥。", "discovered_by": "Hennig Brand" },
+    { "number": 16, "symbol": "S", "name": "硫", "atomic_mass": 32.06, "category": "polyatomic nonmetal", "phase": "Solid", "xpos": 16, "ypos": 3, "electron_configuration": "[Ne] 3s2 3p4", "summary": "黄色非金属，用于硫酸和火药。", "discovered_by": "Ancient civilizations" },
+    { "number": 17, "symbol": "Cl", "name": "氯", "atomic_mass": 35.45, "category": "diatomic nonmetal", "phase": "Gas", "xpos": 17, "ypos": 3, "electron_configuration": "[Ne] 3s2 3p5", "summary": "黄绿色气体，用于消毒和漂白。", "discovered_by": "Carl Wilhelm Scheele" },
+    { "number": 18, "symbol": "Ar", "name": "氩", "atomic_mass": 39.9481, "category": "noble gas", "phase": "Gas", "xpos": 18, "ypos": 3, "electron_configuration": "[Ne] 3s2 3p6", "summary": "惰性气体，用于焊接保护气和灯泡。", "discovered_by": "Lord Rayleigh & William Ramsay" },
+    { "number": 19, "symbol": "K", "name": "钾", "atomic_mass": 39.09831, "category": "alkali metal", "phase": "Solid", "xpos": 1, "ypos": 4, "electron_configuration": "[Ar] 4s1", "summary": "活泼的碱金属，对生命至关重要。", "discovered_by": "Humphry Davy" },
+    { "number": 20, "symbol": "Ca", "name": "钙", "atomic_mass": 40.0784, "category": "alkaline earth metal", "phase": "Solid", "xpos": 2, "ypos": 4, "electron_configuration": "[Ar] 4s2", "summary": "存在于骨骼和牙齿中，用于水泥。", "discovered_by": "Humphry Davy" },
+    { "number": 21, "symbol": "Sc", "name": "钪", "atomic_mass": 44.9559085, "category": "transition metal", "phase": "Solid", "xpos": 3, "ypos": 4, "electron_configuration": "[Ar] 3d1 4s2", "summary": "稀土金属，用于高强度合金。", "discovered_by": "Lars Fredrik Nilson" },
+    { "number": 22, "symbol": "Ti", "name": "钛", "atomic_mass": 47.8671, "category": "transition metal", "phase": "Solid", "xpos": 4, "ypos": 4, "electron_configuration": "[Ar] 3d2 4s2", "summary": "强度高、耐腐蚀的金属，用于航空和医疗植入物。", "discovered_by": "William Gregor" },
+    { "number": 23, "symbol": "V", "name": "钒", "atomic_mass": 50.94151, "category": "transition metal", "phase": "Solid", "xpos": 5, "ypos": 4, "electron_configuration": "[Ar] 3d3 4s2", "summary": "用于制造高强度钢合金。", "discovered_by": "Andrés Manuel del Río" },
+    { "number": 24, "symbol": "Cr", "name": "铬", "atomic_mass": 51.99616, "category": "transition metal", "phase": "Solid", "xpos": 6, "ypos": 4, "electron_configuration": "[Ar] 3d5 4s1", "summary": "硬而耐腐蚀的金属，用于电镀和不锈钢。", "discovered_by": "Louis Nicolas Vauquelin" },
+    { "number": 25, "symbol": "Mn", "name": "锰", "atomic_mass": 54.9380443, "category": "transition metal", "phase": "Solid", "xpos": 7, "ypos": 4, "electron_configuration": "[Ar] 3d5 4s2", "summary": "用于炼钢和电池。", "discovered_by": "Carl Wilhelm Scheele" },
+    { "number": 26, "symbol": "Fe", "name": "铁", "atomic_mass": 55.8452, "category": "transition metal", "phase": "Solid", "xpos": 8, "ypos": 4, "electron_configuration": "[Ar] 3d6 4s2", "summary": "最重要的金属之一，用于建筑和制造。", "discovered_by": "Ancient civilizations" },
+    { "number": 27, "symbol": "Co", "name": "钴", "atomic_mass": 58.9331944, "category": "transition metal", "phase": "Solid", "xpos": 9, "ypos": 4, "electron_configuration": "[Ar] 3d7 4s2", "summary": "用于强磁铁和高温合金。", "discovered_by": "Georg Brandt" },
+    { "number": 28, "symbol": "Ni", "name": "镍", "atomic_mass": 58.69344, "category": "transition metal", "phase": "Solid", "xpos": 10, "ypos": 4, "electron_configuration": "[Ar] 3d8 4s2", "summary": "用于不锈钢、硬币和电池。", "discovered_by": "Axel Fredrik Cronstedt" },
+    { "number": 29, "symbol": "Cu", "name": "铜", "atomic_mass": 63.5463, "category": "transition metal", "phase": "Solid", "xpos": 11, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s1", "summary": "优良的导电体，用于电线和管道。", "discovered_by": "Ancient civilizations" },
+    { "number": 30, "symbol": "Zn", "name": "锌", "atomic_mass": 65.382, "category": "transition metal", "phase": "Solid", "xpos": 12, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s2", "summary": "用于镀锌防锈和电池。", "discovered_by": "Andreas Sigismund Marggraf" },
+    { "number": 31, "symbol": "Ga", "name": "镓", "atomic_mass": 69.7231, "category": "post-transition metal", "phase": "Solid", "xpos": 13, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s2 4p1", "summary": "低熔点金属，用于半导体。", "discovered_by": "Paul-Émile Lecoq de Boisbaudran" },
+    { "number": 32, "symbol": "Ge", "name": "锗", "atomic_mass": 72.6308, "category": "metalloid", "phase": "Solid", "xpos": 14, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s2 4p2", "summary": "半导体材料，用于晶体管和光学。", "discovered_by": "Clemens Winkler" },
+    { "number": 33, "symbol": "As", "name": "砷", "atomic_mass": 74.9215956, "category": "metalloid", "phase": "Solid", "xpos": 15, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s2 4p3", "summary": "有毒的类金属，用于半导体和杀虫剂。", "discovered_by": "Albertus Magnus" },
+    { "number": 34, "symbol": "Se", "name": "硒", "atomic_mass": 78.9718, "category": "polyatomic nonmetal", "phase": "Solid", "xpos": 16, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s2 4p4", "summary": "光敏半导体，用于复印机和玻璃。", "discovered_by": "Jöns Jacob Berzelius" },
+    { "number": 35, "symbol": "Br", "name": "溴", "atomic_mass": 79.904, "category": "diatomic nonmetal", "phase": "Liquid", "xpos": 17, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s2 4p5", "summary": "唯一的液态非金属卤素，用于阻燃剂。", "discovered_by": "Antoine Jérôme Balard" },
+    { "number": 36, "symbol": "Kr", "name": "氪", "atomic_mass": 83.7982, "category": "noble gas", "phase": "Gas", "xpos": 18, "ypos": 4, "electron_configuration": "[Ar] 3d10 4s2 4p6", "summary": "惰性气体，用于激光和高强度灯。", "discovered_by": "William Ramsay & Morris Travers" },
+    { "number": 37, "symbol": "Rb", "name": "铷", "atomic_mass": 85.46783, "category": "alkali metal", "phase": "Solid", "xpos": 1, "ypos": 5, "electron_configuration": "[Kr] 5s1", "summary": "活泼的碱金属，用于原子钟。", "discovered_by": "Robert Bunsen & Gustav Kirchhoff" },
+    { "number": 38, "symbol": "Sr", "name": "锶", "atomic_mass": 87.621, "category": "alkaline earth metal", "phase": "Solid", "xpos": 2, "ypos": 5, "electron_configuration": "[Kr] 5s2", "summary": "用于烟火（红色）和玻璃。", "discovered_by": "Adair Crawford" },
+    { "number": 39, "symbol": "Y", "name": "钇", "atomic_mass": 88.905842, "category": "transition metal", "phase": "Solid", "xpos": 3, "ypos": 5, "electron_configuration": "[Kr] 4d1 5s2", "summary": "稀土金属，用于激光和超导体。", "discovered_by": "Johan Gadolin" },
+    { "number": 40, "symbol": "Zr", "name": "锆", "atomic_mass": 91.2242, "category": "transition metal", "phase": "Solid", "xpos": 4, "ypos": 5, "electron_configuration": "[Kr] 4d2 5s2", "summary": "耐高温、耐腐蚀，用于核反应堆。", "discovered_by": "Martin Heinrich Klaproth" },
+    { "number": 41, "symbol": "Nb", "name": "铌", "atomic_mass": 92.906372, "category": "transition metal", "phase": "Solid", "xpos": 5, "ypos": 5, "electron_configuration": "[Kr] 4d4 5s1", "summary": "用于超导磁体和高温合金。", "discovered_by": "Charles Hatchett" },
+    { "number": 42, "symbol": "Mo", "name": "钼", "atomic_mass": 95.962, "category": "transition metal", "phase": "Solid", "xpos": 6, "ypos": 5, "electron_configuration": "[Kr] 4d5 5s1", "summary": "高熔点金属，用于高强度钢合金。", "discovered_by": "Carl Wilhelm Scheele" },
+    { "number": 43, "symbol": "Tc", "name": "锝", "atomic_mass": 98, "category": "transition metal", "phase": "Solid", "xpos": 7, "ypos": 5, "electron_configuration": "[Kr] 4d5 5s2", "summary": "第一个人工合成的元素，具有放射性。", "discovered_by": "Emilio Segrè & Carlo Perrier" },
+    { "number": 44, "symbol": "Ru", "name": "钌", "atomic_mass": 101.072, "category": "transition metal", "phase": "Solid", "xpos": 8, "ypos": 5, "electron_configuration": "[Kr] 4d7 5s1", "summary": "稀有贵金属，用作催化剂。", "discovered_by": "Karl Ernst Claus" },
+    { "number": 45, "symbol": "Rh", "name": "铑", "atomic_mass": 102.905502, "category": "transition metal", "phase": "Solid", "xpos": 9, "ypos": 5, "electron_configuration": "[Kr] 4d8 5s1", "summary": "稀有贵金属，用于催化转换器。", "discovered_by": "William Hyde Wollaston" },
+    { "number": 46, "symbol": "Pd", "name": "钯", "atomic_mass": 106.421, "category": "transition metal", "phase": "Solid", "xpos": 10, "ypos": 5, "electron_configuration": "[Kr] 4d10", "summary": "贵金属，用于催化剂和珠宝。", "discovered_by": "William Hyde Wollaston" },
+    { "number": 47, "symbol": "Ag", "name": "银", "atomic_mass": 107.86822, "category": "transition metal", "phase": "Solid", "xpos": 11, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s1", "summary": "贵金属，优良的导电体，用于珠宝和货币。", "discovered_by": "Ancient civilizations" },
+    { "number": 48, "symbol": "Cd", "name": "镉", "atomic_mass": 112.4144, "category": "transition metal", "phase": "Solid", "xpos": 12, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s2", "summary": "有毒金属，用于电池和颜料。", "discovered_by": "Karl Samuel Leberecht Hermann & Friedrich Stromeyer" },
+    { "number": 49, "symbol": "In", "name": "铟", "atomic_mass": 114.8181, "category": "post-transition metal", "phase": "Solid", "xpos": 13, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s2 5p1", "summary": "软金属，用于液晶显示屏。", "discovered_by": "Ferdinand Reich & Hieronymous Theodor Richter" },
+    { "number": 50, "symbol": "Sn", "name": "锡", "atomic_mass": 118.7107, "category": "post-transition metal", "phase": "Solid", "xpos": 14, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s2 5p2", "summary": "用于焊料和镀层（马口铁）。", "discovered_by": "Ancient civilizations" },
+    { "number": 51, "symbol": "Sb", "name": "锑", "atomic_mass": 121.7601, "category": "metalloid", "phase": "Solid", "xpos": 15, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s2 5p3", "summary": "类金属，用于合金和阻燃剂。", "discovered_by": "Ancient civilizations" },
+    { "number": 52, "symbol": "Te", "name": "碲", "atomic_mass": 127.603, "category": "metalloid", "phase": "Solid", "xpos": 16, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s2 5p4", "summary": "类金属，用于合金和半导体。", "discovered_by": "Franz-Joseph Müller von Reichenstein" },
+    { "number": 53, "symbol": "I", "name": "碘", "atomic_mass": 126.904473, "category": "diatomic nonmetal", "phase": "Solid", "xpos": 17, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s2 5p5", "summary": "卤素，对甲状腺功能重要，用作消毒剂。", "discovered_by": "Bernard Courtois" },
+    { "number": 54, "symbol": "Xe", "name": "氙", "atomic_mass": 131.2936, "category": "noble gas", "phase": "Gas", "xpos": 18, "ypos": 5, "electron_configuration": "[Kr] 4d10 5s2 5p6", "summary": "重惰性气体，用于高强度灯和麻醉。", "discovered_by": "William Ramsay & Morris Travers" },
+    { "number": 55, "symbol": "Cs", "name": "铯", "atomic_mass": 132.905451966, "category": "alkali metal", "phase": "Solid", "xpos": 1, "ypos": 6, "electron_configuration": "[Xe] 6s1", "summary": "最活泼的碱金属之一，用于原子钟。", "discovered_by": "Robert Bunsen & Gustav Kirchhoff" },
+    { "number": 56, "symbol": "Ba", "name": "钡", "atomic_mass": 137.3277, "category": "alkaline earth metal", "phase": "Solid", "xpos": 2, "ypos": 6, "electron_configuration": "[Xe] 6s2", "summary": "用于烟火（绿色）和医学成像。", "discovered_by": "Carl Wilhelm Scheele" },
+    { "number": "57-71", "symbol": "La-Lu", "name": "", "category": "lanthanide", "xpos": 3, "ypos": 6, "is_series": true }, // Placeholder
+    { "number": 72, "symbol": "Hf", "name": "铪", "atomic_mass": 178.492, "category": "transition metal", "phase": "Solid", "xpos": 4, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d2 6s2", "summary": "与锆性质相似，用于核控制棒。", "discovered_by": "Dirk Coster & George de Hevesy" },
+    { "number": 73, "symbol": "Ta", "name": "钽", "atomic_mass": 180.947882, "category": "transition metal", "phase": "Solid", "xpos": 5, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d3 6s2", "summary": "耐腐蚀金属，用于电子元件和合金。", "discovered_by": "Anders Gustaf Ekeberg" },
+    { "number": 74, "symbol": "W", "name": "钨", "atomic_mass": 183.841, "category": "transition metal", "phase": "Solid", "xpos": 6, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d4 6s2", "summary": "熔点最高的金属，用于灯丝和硬质合金。", "discovered_by": "Fausto & Juan José Elhuyar" },
+    { "number": 75, "symbol": "Re", "name": "铼", "atomic_mass": 186.2071, "category": "transition metal", "phase": "Solid", "xpos": 7, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d5 6s2", "summary": "高熔点金属，用于高温合金和催化剂。", "discovered_by": "Walter Noddack, Ida Tacke, Otto Berg" },
+    { "number": 76, "symbol": "Os", "name": "锇", "atomic_mass": 190.233, "category": "transition metal", "phase": "Solid", "xpos": 8, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d6 6s2", "summary": "密度最大的天然元素，用于硬质合金。", "discovered_by": "Smithson Tennant" },
+    { "number": 77, "symbol": "Ir", "name": "铱", "atomic_mass": 192.2173, "category": "transition metal", "phase": "Solid", "xpos": 9, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d7 6s2", "summary": "硬而脆的贵金属，用于钢笔尖和电触点。", "discovered_by": "Smithson Tennant" },
+    { "number": 78, "symbol": "Pt", "name": "铂", "atomic_mass": 195.0849, "category": "transition metal", "phase": "Solid", "xpos": 10, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d9 6s1", "summary": "贵金属，用于珠宝、催化剂和实验室设备。", "discovered_by": "Antonio de Ulloa" },
+    { "number": 79, "symbol": "Au", "name": "金", "atomic_mass": 196.9665695, "category": "transition metal", "phase": "Solid", "xpos": 11, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s1", "summary": "贵金属，用于珠宝、货币和电子产品。", "discovered_by": "Ancient civilizations" },
+    { "number": 80, "symbol": "Hg", "name": "汞", "atomic_mass": 200.5923, "category": "transition metal", "phase": "Liquid", "xpos": 12, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s2", "summary": "唯一的液态金属（标准状况下），有毒。", "discovered_by": "Ancient civilizations" },
+    { "number": 81, "symbol": "Tl", "name": "铊", "atomic_mass": 204.38, "category": "post-transition metal", "phase": "Solid", "xpos": 13, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s2 6p1", "summary": "软而重的有毒金属。", "discovered_by": "William Crookes & Claude-Auguste Lamy" },
+    { "number": 82, "symbol": "Pb", "name": "铅", "atomic_mass": 207.21, "category": "post-transition metal", "phase": "Solid", "xpos": 14, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s2 6p2", "summary": "重而软的有毒金属，用于电池和防辐射。", "discovered_by": "Ancient civilizations" },
+    { "number": 83, "symbol": "Bi", "name": "铋", "atomic_mass": 208.980401, "category": "post-transition metal", "phase": "Solid", "xpos": 15, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s2 6p3", "summary": "重金属，用于低熔点合金和药物。", "discovered_by": "Claude François Geoffroy" },
+    { "number": 84, "symbol": "Po", "name": "钋", "atomic_mass": 209, "category": "post-transition metal", "phase": "Solid", "xpos": 16, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s2 6p4", "summary": "具有强放射性的稀有元素。", "discovered_by": "Marie & Pierre Curie" },
+    { "number": 85, "symbol": "At", "name": "砹", "atomic_mass": 210, "category": "metalloid", "phase": "Solid", "xpos": 17, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s2 6p5", "summary": "具有放射性的稀有卤素。", "discovered_by": "Dale R. Corson, Kenneth Ross MacKenzie, Emilio Segrè" },
+    { "number": 86, "symbol": "Rn", "name": "氡", "atomic_mass": 222, "category": "noble gas", "phase": "Gas", "xpos": 18, "ypos": 6, "electron_configuration": "[Xe] 4f14 5d10 6s2 6p6", "summary": "具有放射性的惰性气体。", "discovered_by": "Friedrich Ernst Dorn" },
+    { "number": 87, "symbol": "Fr", "name": "钫", "atomic_mass": 223, "category": "alkali metal", "phase": "Solid", "xpos": 1, "ypos": 7, "electron_configuration": "[Rn] 7s1", "summary": "具有强放射性的碱金属。", "discovered_by": "Marguerite Perey" },
+    { "number": 88, "symbol": "Ra", "name": "镭", "atomic_mass": 226, "category": "alkaline earth metal", "phase": "Solid", "xpos": 2, "ypos": 7, "electron_configuration": "[Rn] 7s2", "summary": "具有放射性的碱土金属。", "discovered_by": "Marie & Pierre Curie" },
+    { "number": "89-103", "symbol": "Ac-Lr", "name": "", "category": "actinide", "xpos": 3, "ypos": 7, "is_series": true }, // Placeholder
+    { "number": 104, "symbol": "Rf", "name": "卢", "atomic_mass": 267, "category": "transition metal", "phase": "Solid", "xpos": 4, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d2 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "Joint Institute for Nuclear Research & Lawrence Berkeley National Laboratory" },
+    { "number": 105, "symbol": "Db", "name": "钅杜", "atomic_mass": 268, "category": "transition metal", "phase": "Solid", "xpos": 5, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d3 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "Joint Institute for Nuclear Research & Lawrence Berkeley National Laboratory" },
+    { "number": 106, "symbol": "Sg", "name": "钅喜", "atomic_mass": 269, "category": "transition metal", "phase": "Solid", "xpos": 6, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d4 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "Lawrence Berkeley National Laboratory & GSI Helmholtz Centre for Heavy Ion Research" },
+    { "number": 107, "symbol": "Bh", "name": "钅波", "atomic_mass": 270, "category": "transition metal", "phase": "Solid", "xpos": 7, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d5 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "GSI Helmholtz Centre for Heavy Ion Research" },
+    { "number": 108, "symbol": "Hs", "name": "钅黑", "atomic_mass": 269, "category": "transition metal", "phase": "Solid", "xpos": 8, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d6 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "GSI Helmholtz Centre for Heavy Ion Research" },
+    { "number": 109, "symbol": "Mt", "name": "钅麦", "atomic_mass": 278, "category": "transition metal", "phase": "Solid", "xpos": 9, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d7 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "GSI Helmholtz Centre for Heavy Ion Research" },
+    { "number": 110, "symbol": "Ds", "name": "钅达", "atomic_mass": 281, "category": "transition metal", "phase": "Solid", "xpos": 10, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d8 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "GSI Helmholtz Centre for Heavy Ion Research" },
+    { "number": 111, "symbol": "Rg", "name": "钅仑", "atomic_mass": 282, "category": "transition metal", "phase": "Solid", "xpos": 11, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d9 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "GSI Helmholtz Centre for Heavy Ion Research" },
+    { "number": 112, "symbol": "Cn", "name": "鎶", "atomic_mass": 285, "category": "transition metal", "phase": "Gas", "xpos": 12, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d10 7s2", "summary": "人工合成的放射性超重元素。", "discovered_by": "GSI Helmholtz Centre for Heavy Ion Research" },
+    { "number": 113, "symbol": "Nh", "name": "鉨", "atomic_mass": 286, "category": "post-transition metal", "phase": "Solid", "xpos": 13, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d10 7s2 7p1", "summary": "人工合成的放射性超重元素。", "discovered_by": "RIKEN" },
+    { "number": 114, "symbol": "Fl", "name": "弗", "atomic_mass": 289, "category": "post-transition metal", "phase": "Solid", "xpos": 14, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d10 7s2 7p2", "summary": "人工合成的放射性超重元素。", "discovered_by": "Joint Institute for Nuclear Research" },
+    { "number": 115, "symbol": "Mc", "name": "镆", "atomic_mass": 290, "category": "post-transition metal", "phase": "Solid", "xpos": 15, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d10 7s2 7p3", "summary": "人工合成的放射性超重元素。", "discovered_by": "Joint Institute for Nuclear Research" },
+    { "number": 116, "symbol": "Lv", "name": "鉝", "atomic_mass": 293, "category": "post-transition metal", "phase": "Solid", "xpos": 16, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d10 7s2 7p4", "summary": "人工合成的放射性超重元素。", "discovered_by": "Joint Institute for Nuclear Research & Lawrence Livermore National Laboratory" },
+    { "number": 117, "symbol": "Ts", "name": "石田", "atomic_mass": 294, "category": "metalloid", "phase": "Solid", "xpos": 17, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d10 7s2 7p5", "summary": "人工合成的放射性超重元素。", "discovered_by": "Joint Institute for Nuclear Research" },
+    { "number": 118, "symbol": "Og", "name": "奥甘", "atomic_mass": 294, "category": "noble gas", "phase": "Gas", "xpos": 18, "ypos": 7, "electron_configuration": "[Rn] 5f14 6d10 7s2 7p6", "summary": "目前发现最重的元素，人工合成的放射性惰性气体。", "discovered_by": "Joint Institute for Nuclear Research" },
+    // Lanthanides (Positioned at bottom)
+    { "number": 57, "symbol": "La", "name": "镧", "atomic_mass": 138.905477, "category": "lanthanide", "phase": "Solid", "xpos": 4, "ypos": 9, "electron_configuration": "[Xe] 5d1 6s2", "summary": "镧系元素的第一个，用于合金和打火石。", "discovered_by": "Carl Gustaf Mosander" },
+    { "number": 58, "symbol": "Ce", "name": "铈", "atomic_mass": 140.1161, "category": "lanthanide", "phase": "Solid", "xpos": 5, "ypos": 9, "electron_configuration": "[Xe] 4f1 5d1 6s2", "summary": "镧系中最丰富的，用于催化剂和玻璃抛光。", "discovered_by": "Martin Heinrich Klaproth & Jöns Jacob Berzelius" },
+    { "number": 59, "symbol": "Pr", "name": "镨", "atomic_mass": 140.907662, "category": "lanthanide", "phase": "Solid", "xpos": 6, "ypos": 9, "electron_configuration": "[Xe] 4f3 6s2", "summary": "用于制造强磁铁和玻璃着色（黄绿色）。", "discovered_by": "Carl Auer von Welsbach" },
+    { "number": 60, "symbol": "Nd", "name": "钕", "atomic_mass": 144.2423, "category": "lanthanide", "phase": "Solid", "xpos": 7, "ypos": 9, "electron_configuration": "[Xe] 4f4 6s2", "summary": "用于制造强磁铁（钕磁铁）和激光。", "discovered_by": "Carl Auer von Welsbach" },
+    { "number": 61, "symbol": "Pm", "name": "钷", "atomic_mass": 145, "category": "lanthanide", "phase": "Solid", "xpos": 8, "ypos": 9, "electron_configuration": "[Xe] 4f5 6s2", "summary": "具有放射性的稀土元素，用于夜光材料。", "discovered_by": "Jacob A. Marinsky, Lawrence E. Glendenin, Charles D. Coryell" },
+    { "number": 62, "symbol": "Sm", "name": "钐", "atomic_mass": 150.362, "category": "lanthanide", "phase": "Solid", "xpos": 9, "ypos": 9, "electron_configuration": "[Xe] 4f6 6s2", "summary": "用于制造强磁铁和核反应堆控制棒。", "discovered_by": "Paul-Émile Lecoq de Boisbaudran" },
+    { "number": 63, "symbol": "Eu", "name": "铕", "atomic_mass": 151.9641, "category": "lanthanide", "phase": "Solid", "xpos": 10, "ypos": 9, "electron_configuration": "[Xe] 4f7 6s2", "summary": "用于电视屏幕和荧光灯的红色磷光体。", "discovered_by": "Eugène-Anatole Demarçay" },
+    { "number": 64, "symbol": "Gd", "name": "钆", "atomic_mass": 157.253, "category": "lanthanide", "phase": "Solid", "xpos": 11, "ypos": 9, "electron_configuration": "[Xe] 4f7 5d1 6s2", "summary": "具有强顺磁性，用于MRI造影剂。", "discovered_by": "Jean Charles Galissard de Marignac" },
+    { "number": 65, "symbol": "Tb", "name": "铽", "atomic_mass": 158.925352, "category": "lanthanide", "phase": "Solid", "xpos": 12, "ypos": 9, "electron_configuration": "[Xe] 4f9 6s2", "summary": "用于绿色磷光体和固态器件。", "discovered_by": "Carl Gustaf Mosander" },
+    { "number": 66, "symbol": "Dy", "name": "镝", "atomic_mass": 162.5001, "category": "lanthanide", "phase": "Solid", "xpos": 13, "ypos": 9, "electron_configuration": "[Xe] 4f10 6s2", "summary": "用于制造强磁铁和激光材料。", "discovered_by": "Paul-Émile Lecoq de Boisbaudran" },
+    { "number": 67, "symbol": "Ho", "name": "钬", "atomic_mass": 164.930332, "category": "lanthanide", "phase": "Solid", "xpos": 14, "ypos": 9, "electron_configuration": "[Xe] 4f11 6s2", "summary": "具有强磁性，用于激光和磁性合金。", "discovered_by": "Marc Delafontaine & Jacques-Louis Soret" },
+    { "number": 68, "symbol": "Er", "name": "铒", "atomic_mass": 167.2593, "category": "lanthanide", "phase": "Solid", "xpos": 15, "ypos": 9, "electron_configuration": "[Xe] 4f12 6s2", "summary": "用于光纤放大器和激光（粉红色）。", "discovered_by": "Carl Gustaf Mosander" },
+    { "number": 69, "symbol": "Tm", "name": "铥", "atomic_mass": 168.934222, "category": "lanthanide", "phase": "Solid", "xpos": 16, "ypos": 9, "electron_configuration": "[Xe] 4f13 6s2", "summary": "稀有的镧系元素，用于便携式X射线设备。", "discovered_by": "Per Teodor Cleve" },
+    { "number": 70, "symbol": "Yb", "name": "镱", "atomic_mass": 173.0545, "category": "lanthanide", "phase": "Solid", "xpos": 17, "ypos": 9, "electron_configuration": "[Xe] 4f14 6s2", "summary": "软金属，用于某些激光和不锈钢。", "discovered_by": "Jean Charles Galissard de Marignac" },
+    { "number": 71, "symbol": "Lu", "name": "镥", "atomic_mass": 174.96681, "category": "lanthanide", "phase": "Solid", "xpos": 18, "ypos": 9, "electron_configuration": "[Xe] 4f14 5d1 6s2", "summary": "镧系最后一个，用于催化剂。", "discovered_by": "Georges Urbain & Carl Auer von Welsbach" },
+    // Actinides (Positioned at bottom)
+    { "number": 89, "symbol": "Ac", "name": "锕", "atomic_mass": 227, "category": "actinide", "phase": "Solid", "xpos": 4, "ypos": 10, "electron_configuration": "[Rn] 6d1 7s2", "summary": "锕系元素的第一个，具有强放射性。", "discovered_by": "André-Louis Debierne & Friedrich Oskar Giesel" },
+    { "number": 90, "symbol": "Th", "name": "钍", "atomic_mass": 232.03774, "category": "actinide", "phase": "Solid", "xpos": 5, "ypos": 10, "electron_configuration": "[Rn] 6d2 7s2", "summary": "具有放射性，可作核燃料。", "discovered_by": "Jöns Jacob Berzelius" },
+    { "number": 91, "symbol": "Pa", "name": "镤", "atomic_mass": 231.035882, "category": "actinide", "phase": "Solid", "xpos": 6, "ypos": 10, "electron_configuration": "[Rn] 5f2 6d1 7s2", "summary": "具有放射性的稀有金属。", "discovered_by": "Kasimir Fajans & Oswald Helmuth Göhring" },
+    { "number": 92, "symbol": "U", "name": "铀", "atomic_mass": 238.028913, "category": "actinide", "phase": "Solid", "xpos": 7, "ypos": 10, "electron_configuration": "[Rn] 5f3 6d1 7s2", "summary": "最重要的核燃料，具有放射性。", "discovered_by": "Martin Heinrich Klaproth" },
+    { "number": 93, "symbol": "Np", "name": "镎", "atomic_mass": 237, "category": "actinide", "phase": "Solid", "xpos": 8, "ypos": 10, "electron_configuration": "[Rn] 5f4 6d1 7s2", "summary": "第一个超铀元素，具有放射性。", "discovered_by": "Edwin McMillan & Philip H. Abelson" },
+    { "number": 94, "symbol": "Pu", "name": "钚", "atomic_mass": 244, "category": "actinide", "phase": "Solid", "xpos": 9, "ypos": 10, "electron_configuration": "[Rn] 5f6 7s2", "summary": "重要的核燃料和核武器材料，具有放射性。", "discovered_by": "Glenn T. Seaborg et al." },
+    { "number": 95, "symbol": "Am", "name": "镅", "atomic_mass": 243, "category": "actinide", "phase": "Solid", "xpos": 10, "ypos": 10, "electron_configuration": "[Rn] 5f7 7s2", "summary": "具有放射性，用于烟雾探测器。", "discovered_by": "Glenn T. Seaborg et al." },
+    { "number": 96, "symbol": "Cm", "name": "锔", "atomic_mass": 247, "category": "actinide", "phase": "Solid", "xpos": 11, "ypos": 10, "electron_configuration": "[Rn] 5f7 6d1 7s2", "summary": "具有强放射性的人工合成元素。", "discovered_by": "Glenn T. Seaborg et al." },
+    { "number": 97, "symbol": "Bk", "name": "锫", "atomic_mass": 247, "category": "actinide", "phase": "Solid", "xpos": 12, "ypos": 10, "electron_configuration": "[Rn] 5f9 7s2", "summary": "具有放射性的人工合成元素。", "discovered_by": "Glenn T. Seaborg et al." },
+    { "number": 98, "symbol": "Cf", "name": "锎", "atomic_mass": 251, "category": "actinide", "phase": "Solid", "xpos": 13, "ypos": 10, "electron_configuration": "[Rn] 5f10 7s2", "summary": "具有强放射性，用作中子源。", "discovered_by": "Glenn T. Seaborg et al." },
+    { "number": 99, "symbol": "Es", "name": "锿", "atomic_mass": 252, "category": "actinide", "phase": "Solid", "xpos": 14, "ypos": 10, "electron_configuration": "[Rn] 5f11 7s2", "summary": "具有放射性的人工合成元素。", "discovered_by": "Lawrence Berkeley National Laboratory" },
+    { "number": 100, "symbol": "Fm", "name": "镄", "atomic_mass": 257, "category": "actinide", "phase": "Solid", "xpos": 15, "ypos": 10, "electron_configuration": "[Rn] 5f12 7s2", "summary": "具有放射性的人工合成元素。", "discovered_by": "Lawrence Berkeley National Laboratory" },
+    { "number": 101, "symbol": "Md", "name": "钔", "atomic_mass": 258, "category": "actinide", "phase": "Solid", "xpos": 16, "ypos": 10, "electron_configuration": "[Rn] 5f13 7s2", "summary": "具有放射性的人工合成元素。", "discovered_by": "Lawrence Berkeley National Laboratory" },
+    { "number": 102, "symbol": "No", "name": "诺", "atomic_mass": 259, "category": "actinide", "phase": "Solid", "xpos": 17, "ypos": 10, "electron_configuration": "[Rn] 5f14 7s2", "summary": "具有放射性的人工合成元素。", "discovered_by": "Joint Institute for Nuclear Research & Lawrence Berkeley National Laboratory" },
+    { "number": 103, "symbol": "Lr", "name": "铹", "atomic_mass": 266, "category": "actinide", "phase": "Solid", "xpos": 18, "ypos": 10, "electron_configuration": "[Rn] 5f14 7s2 7p1", "summary": "锕系最后一个，人工合成的放射性元素。", "discovered_by": "Lawrence Berkeley National Laboratory" }
+]
+        };
+
+        const table = document.getElementById('periodic-table');
+        const detailsPanel = document.getElementById('element-details');
+        let activeElementTile = null;
+
+        function formatCategory(category) {
+             // Replace hyphens/spaces with spaces and capitalize words for display
+             if (!category) return 'unknown';
+            return category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function displayElementDetails(element) {
+            detailsPanel.classList.remove('placeholder');
+            detailsPanel.innerHTML = `
+                <div class="detail-header">
+                    <div class="detail-symbol">${element.symbol}</div>
+                    <div class="detail-name-number">
+                        <div class="detail-name">${element.name}</div>
+                        <div class="detail-number">原子序数: ${element.number}</div>
+                    </div>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <strong>原子量</strong>
+                        <span>${element.atomic_mass ? element.atomic_mass.toFixed(3) : 'N/A'} u</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>类别</strong>
+                        <span>${formatCategory(element.category) || 'N/A'}</span>
+                    </div>
+                     <div class="detail-item">
+                        <strong>物态 (标准状况)</strong>
+                        <span>${element.phase || 'N/A'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>电子排布</strong>
+                        <span>${element.electron_configuration || 'N/A'}</span>
+                    </div>
+                     <div class="detail-item" style="grid-column: span 2;"> <!-- Make summary wider -->
+                        <strong>简介</strong>
+                        <span>${element.summary || '无详细信息'}</span>
+                    </div>
+                      <div class="detail-item">
+                        <strong>发现者</strong>
+                        <span>${element.discovered_by || 'N/A'}</span>
+                    </div>
+                 </div>
+            `;
+             // Add category color border to details panel dynamically
+             const categoryClass = element.category ? element.category.replace(/\s+/g, '-') : 'unknown';
+             const colorVar = `var(--color-${categoryClass})`;
+             detailsPanel.style.borderTop = `5px solid ${colorVar}`;
+             detailsPanel.style.boxShadow = `0 0 20px color-mix(in srgb, ${colorVar} 30%, transparent)`;
+
+
+        }
+
+        function createPeriodicTable() {
+            periodicTableData.elements.forEach(element => {
+                const tile = document.createElement('div');
+                tile.classList.add('element');
+
+                 // Convert category name to CSS class (e.g., "alkali metal" -> "alkali-metal")
+                 const categoryClass = element.category ? element.category.replace(/\s+/g, '-') : 'unknown';
+                tile.classList.add(categoryClass);
+
+
+                tile.style.gridColumnStart = element.xpos;
+                tile.style.gridRowStart = element.ypos;
+
+                // Handle series placeholders differently (no click, simplified display)
+                if (element.is_series) {
+                     tile.innerHTML = `
+                        <span class="symbol" style="font-size: 1em; color: var(--text-muted);">${element.symbol}</span>
+                        <span class="number" style="font-size: 0.6em;">${element.number}</span>
+                    `;
+                    tile.style.cursor = 'default';
+                    tile.style.opacity = '0.7';
+                    tile.style.background = 'transparent'; // Less prominent
+                    tile.style.borderStyle = 'dashed';
+                } else {
+                    tile.innerHTML = `
+                        <div class="number">${element.number}</div>
+                        <div class="symbol">${element.symbol}</div>
+                        <div class="name">${element.name}</div>
+                    `;
+                     // Add data attribute to easily find element data on click
+                    tile.dataset.number = element.number;
+
+                    tile.addEventListener('click', () => {
+                        // Remove active state from previously clicked tile
+                         if (activeElementTile) {
+                            activeElementTile.classList.remove('active');
+                        }
+                        // Add active state to current tile
+                        tile.classList.add('active');
+                        activeElementTile = tile;
+
+                        displayElementDetails(element);
+                    });
+                 }
+
+                table.appendChild(tile);
+            });
+        }
+
+        // Initialize the table
+        createPeriodicTable();
+
+    </script>
+
+</body>
+</html>
